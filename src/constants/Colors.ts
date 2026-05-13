@@ -1,5 +1,6 @@
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
+const tintColorPotato = '#8b5a2b';
 
 export default {
   light: {
@@ -15,5 +16,12 @@ export default {
     tint: tintColorDark,
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorDark,
+  },
+  potato: {
+    text: '#381b06ff', // Dark Espresso Earth
+    background: '#fcf8f2', // Potato Flesh Cream
+    darker: '#542706ff',
+    tint: tintColorPotato,
+    tabIconSelected: tintColorPotato,
   },
 };
