@@ -1,12 +1,36 @@
 import Button from '@/src/components/Button';
 import Colors from '@/src/constants/Colors';
-import { Link, Stack } from 'expo-router';
+import { signIn } from '@/src/lib/queries/auth';
+import { Link, Stack, router } from 'expo-router';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, View } from 'react-native';
 
 const SignInScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false); 
+
+    const handleSignIn = async () => {
+        //basic validation
+        if (!email || !password) {
+            Alert.alert('Error', 'Please fill in all fields')
+            return
+        }
+
+        setLoading(true);
+
+        const { error } = await signIn(email, password)
+
+        //handle signIn error (if any)
+        if (error) {
+            Alert.alert('Sign in failed', error.message)
+            setLoading(false)
+            return
+        }
+
+        //successful login, navigate to home (replace since user can't go back to sign in screen)
+        router.replace('/(user)')
+    }
 
     return (
         <View style={styles.container}>
@@ -30,8 +54,14 @@ const SignInScreen = () => {
                 autoCapitalize="none"
             />
 
+            {/*show spinner while loading, button when not */}
+            {loading
+                ? <ActivityIndicator size="small" color={Colors.potato.text} />
+                : <Button text="Sign in" onPress={handleSignIn} />
+            }
+
             <Link href="/(user)" asChild>
-                <Button text="Sign in" />
+                <Button text="Sign in" onPress={handleSignIn}/>
             </Link>
             <Link href="./sign-up" style={styles.textButton}>
                 Create an account

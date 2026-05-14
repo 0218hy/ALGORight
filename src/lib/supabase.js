@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-asnc-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL
