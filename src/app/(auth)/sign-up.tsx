@@ -43,7 +43,7 @@ const SignUpScreen = () => {
         )
     }
     return (
-        <View>
+        <View style={styles.container}>
             <Image
                 source={require('../../../assets/images/Logo.png')}
                 style={styles.logo}
