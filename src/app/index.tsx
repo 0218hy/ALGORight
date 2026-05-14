@@ -13,7 +13,6 @@ const index = () => {
                 <Button text="User" />
             </Link>
         </View>
-
     )
 };
 

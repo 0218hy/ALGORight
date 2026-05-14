@@ -8,7 +8,7 @@ import { Pressable, ScrollView, StyleSheet } from 'react-native';
 
 const user = users[0];
 
-export default function TabOneScreen() {
+export default function HomePage() {
   const router = useRouter();
 
   if (!user) {
@@ -39,7 +39,7 @@ export default function TabOneScreen() {
       <View style={styles.gridContainer}>
         <Pressable
           style={({ pressed }) => [styles.navCard, pressed && styles.cardPressed]}
-          onPress={() => console.log("pressed")}>
+          onPress={() => router.navigate("./visualizer")}>
           <Text style={styles.navCardText}> Algorithm Visualizer </Text>
         </Pressable>
 
