@@ -30,7 +30,7 @@ const SignInScreen = () => {
                 autoCapitalize="none"
             />
 
-            <Link href="/(tabs)" asChild>
+            <Link href="/(user)" asChild>
                 <Button text="Sign in" />
             </Link>
             <Link href="./sign-up" style={styles.textButton}>
