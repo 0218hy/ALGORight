@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/src/components/useColorScheme';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AuthProvider } from '@/src/context/AuthContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -50,8 +50,7 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-
-    <SafeAreaProvider>
+    <AuthProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -59,6 +58,6 @@ function RootLayoutNav() {
           <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
         </Stack>
       </ThemeProvider>
-    </SafeAreaProvider>
+    </AuthProvider>
   );
 }

@@ -1,16 +1,47 @@
-import { Link, Stack } from 'expo-router';
+import { signUp } from '@/src/lib/queries/auth';
+import { Link, Stack, router } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, View } from 'react-native';
 import Button from '../../components/Button';
 import Colors from '../../constants/Colors';
 
 const SignUpScreen = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); 
 
-    return (
-        <View style={styles.container}>
-            <Stack.Screen options={{ title: 'Sign up' }} />
+const handleSignUp = async () => {
+  //basic validation 
+  if (!email || !password) {
+    Alert.alert('Error', 'Please fill in all fields') 
+    return 
+  }
+
+  if (password.length < 6) {
+    Alert.alert('Error', 'Password must be at least 6 characters')
+    return
+  }
+
+  setLoading(true)
+
+  const { error } = await signUp(email, password)
+
+  //Handle signUp error 
+  if (error) {
+    Alert.alert('Sign up failed', error.message) 
+    setLoading(false) 
+    return 
+  }
+
+  //successful signUp
+  Alert.alert(
+    'Account created!', 
+    'Please check your email to confirm your account', 
+    [
+      { text: 'OK', onPress: () => router.replace('/sign-in') }
+    ]
+  )
+}
 
             <Image
                 source={require('../../../assets/images/Logo.png')}
@@ -34,12 +65,16 @@ const SignUpScreen = () => {
                 secureTextEntry
             />
 
-            <Button text="Create account" />
-            <Link href="./sign-in" style={styles.textButton}>
-                Sign in
-            </Link>
-        </View>
-    );
+      {loading
+        ? <ActivityIndicator size="small" color={Colors.potato.text} />
+        : <Button text="Create account" onPress={handleSignUp} />
+      }
+      
+      <Link href="./sign-in" style={styles.textButton}>
+        Sign in
+      </Link>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
