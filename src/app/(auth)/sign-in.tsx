@@ -3,7 +3,7 @@ import Colors from '@/src/constants/Colors';
 import { signIn } from '@/src/lib/queries/auth';
 import { Link, Stack, router } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, View, Image} from 'react-native';
 
 const SignInScreen = () => {
     const [email, setEmail] = useState('');
@@ -50,6 +50,7 @@ const SignInScreen = () => {
                 onChangeText={setEmail}
                 placeholder="jane@gmail.com"
                 style={styles.input}
+                autoCapitalize="none"
             />
 
             <Text style={styles.label}>Password</Text>
