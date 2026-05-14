@@ -19,17 +19,20 @@ const SignInScreen = () => {
 
         setLoading(true);
 
-        const { error } = await signIn(email, password)
+        const { data, error } = await signIn(email, password)
 
-        //handle signIn error (if any)
+        //check session, if valid, navigate immediately 
+        if (data?.session) {
+            router.replace('/(user)')
+            return
+        }
+        
+        //only show error if there's no session
         if (error) {
             Alert.alert('Sign in failed', error.message)
             setLoading(false)
             return
         }
-
-        //successful login, navigate to home (replace since user can't go back to sign in screen)
-        router.replace('/(user)')
     }
 
     return (
@@ -60,9 +63,6 @@ const SignInScreen = () => {
                 : <Button text="Sign in" onPress={handleSignIn} />
             }
 
-            <Link href="/(user)" asChild>
-                <Button text="Sign in" onPress={handleSignIn}/>
-            </Link>
             <Link href="./sign-up" style={styles.textButton}>
                 Create an account
             </Link>
