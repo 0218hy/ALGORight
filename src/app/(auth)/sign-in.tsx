@@ -39,6 +39,11 @@ const SignInScreen = () => {
         <View style={styles.container}>
             <Stack.Screen options={{ title: 'Sign in' }} />
 
+            <Image
+                source={require('../../../assets/images/Logo.png')}
+                style={styles.logo}
+            />
+
             <Text style={styles.label}>Email</Text>
             <TextInput
                 value={email}
@@ -73,7 +78,7 @@ const SignInScreen = () => {
 const styles = StyleSheet.create({
     container: {
         padding: 20,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         flex: 1,
     },
     label: {
@@ -93,6 +98,16 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: Colors.potato.darker,
         marginVertical: 10,
+    },
+    logo: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        borderWidth: 2,
+        borderColor: '#ccc',
+        resizeMode: 'contain',
+        alignSelf: 'center',
+        marginBottom: 30,
     },
 });
 
