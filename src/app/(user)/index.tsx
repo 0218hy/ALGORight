@@ -3,21 +3,25 @@ import users from '@/assets/data/users';
 import { Text, View } from '@/src/components/Themed';
 import Colors from '@/src/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet } from 'react-native';
 
 const user = users[0];
 
 export default function TabOneScreen() {
+  const router = useRouter();
+
   if (!user) {
     return <Text>User not found</Text>;
   }
+
 
   return (
     <ScrollView contentContainerStyle={styles.screenView} showsVerticalScrollIndicator={false}>
       {/* App Header */}
       <View style={styles.headerContainer}>
         <Text style={styles.appName}>ALGORight</Text>
-        <Pressable onPress={() => console.log("log out")}>
+        <Pressable onPress={() => router.replace('../(auth)/sign-in')}>
           <Ionicons name="log-out-outline" size={24} color={Colors.potato.text} />
         </Pressable>
       </View>
