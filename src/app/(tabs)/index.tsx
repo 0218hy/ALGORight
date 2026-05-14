@@ -1,17 +1,22 @@
 
 import users from '@/assets/data/users';
+import Button from '@/src/components/Button';
 import { Text, View } from '@/src/components/Themed';
 import Colors from '@/src/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import { Link } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet } from 'react-native';
 
 const user = users[0];
 
 export default function TabOneScreen() {
+  if (!user) {
+    return <Text>User not found</Text>;
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.screenView} showsVerticalScrollIndicator={false}>
-
-      // App Header
+      {/* App Header */}
       <View style={styles.headerContainer}>
         <Text style={styles.appName}>ALGORight</Text>
         <Pressable onPress={() => console.log("log out")}>
@@ -19,7 +24,7 @@ export default function TabOneScreen() {
         </Pressable>
       </View>
 
-      // Profile Card
+      {/* Profile Card */}
       <View style={styles.profileCard}>
         <Text style={styles.name}> {user.name} </Text>
         <View style={styles.rowContainer}>
@@ -28,7 +33,7 @@ export default function TabOneScreen() {
         </View>
       </View>
 
-    // Navigation Menu
+    {/* Navigation Menu */}
       <View style={styles.gridContainer}>
         <Pressable
           style={({ pressed }) => [styles.navCard, pressed && styles.cardPressed]}
@@ -53,6 +58,12 @@ export default function TabOneScreen() {
           onPress={() => console.log("pressed")}>
           <Text style={styles.navCardText}> Challenges </Text>
         </Pressable>
+
+      {/* just for sign in */ }
+        <Text> Just for now to see sign in </Text>
+        <Link href="./(auth)/sign-in" asChild>
+          <Button text="Sign in" />
+        </Link>
 
       </View>
     </ScrollView>
