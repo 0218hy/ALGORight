@@ -7,26 +7,37 @@ const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')
 Deno.serve(async (req) => {
   try {
     //read what the app sent (input)
-    const { algorithm, array } = await req.json() 
+    const { algorithm, inputData } = await req.json() 
 
     //validate input 
-    if (!algorithm || !array) {
+    if (!algorithm || !inputData) {
       return new Response(
-        JSON.stringify( { error: 'algorithm and array are required'}), 
+        JSON.stringify( { error: 'algorithm and inputData are required'}), 
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       )
     }
 
     //prompt for Gemini
-    const prompt = `Generate step by step execution of ${algorithm} on array ${JSON.stringify(array)}.
+    const prompt = `Generate step by step execution of ${algorithm} on input ${JSON.stringify(inputData)}.
 
 Return ONLY a JSON array. No explanation. No markdown. No code blocks. Just raw JSON.
 
-Each step must have exactly these fields:
+For sorting algorithms, each step must have:
 - array: current state of the array as a number array
 - comparing: exactly 2 indices being compared as a number array
 - swapped: boolean, true if a swap occurred at this step
 - sorted: indices already in their final sorted position as a number array
+
+For tree algorithms, each step must have:
+- tree: current state of the tree
+- visited: current node being visited
+- action: what is happening e.g. "visiting", "comparing"
+
+For graph algorithms, each step must have:
+- graph: current state of the graph
+- visited: nodes already visited as an array
+- current: current node being processed
+- action: what is happening
 
 Example for bubble sort on [3,1,2]:
 [
