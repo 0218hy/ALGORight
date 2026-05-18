@@ -19,34 +19,35 @@ Deno.serve(async (req) => {
 
     //prompt for Gemini
     const prompt = `Generate step by step execution of ${algorithm} on input ${JSON.stringify(inputData)}.
-
-Return ONLY a JSON array. No explanation. No markdown. No code blocks. Just raw JSON.
-
+    
 For sorting algorithms, each step must have:
+- algorithmType: always the string "sorting"
 - array: current state of the array as a number array
 - comparing: exactly 2 indices being compared as a number array
 - swapped: boolean, true if a swap occurred at this step
 - sorted: indices already in their final sorted position as a number array
 
 For tree algorithms, each step must have:
+- algorithmType: always the string "tree"
 - tree: current state of the tree
-- visited: current node being visited
-- action: what is happening e.g. "visiting", "comparing"
+- visited: current node being visited as a number
+- action: string describing what is happening
 
 For graph algorithms, each step must have:
+- algorithmType: always the string "graph"
 - graph: current state of the graph
-- visited: nodes already visited as an array
-- current: current node being processed
-- action: what is happening
+- visited: all visited nodes as a number array
+- current: current node being processed as a number
+- action: string describing what is happening
 
 Example for bubble sort on [3,1,2]:
 [
-  {"array": [3,1,2], "comparing": [0,1], "swapped": false, "sorted": []},
-  {"array": [1,3,2], "comparing": [0,1], "swapped": true, "sorted": []},
-  {"array": [1,3,2], "comparing": [1,2], "swapped": false, "sorted": []},
-  {"array": [1,2,3], "comparing": [1,2], "swapped": true, "sorted": [2]},
-  {"array": [1,2,3], "comparing": [0,1], "swapped": false, "sorted": [1,2]},
-  {"array": [1,2,3], "comparing": [], "swapped": false, "sorted": [0,1,2]}
+  {"algorithmType": "sorting", "array": [3,1,2], "comparing": [0,1], "swapped": false, "sorted": []},
+  {"algorithmType": "sorting", "array": [1,3,2], "comparing": [0,1], "swapped": true, "sorted": []},
+  {"algorithmType": "sorting", "array": [1,3,2], "comparing": [1,2], "swapped": false, "sorted": []},
+  {"algorithmType": "sorting", "array": [1,2,3], "comparing": [1,2], "swapped": true, "sorted": [2]},
+  {"algorithmType": "sorting", "array": [1,2,3], "comparing": [0,1], "swapped": false, "sorted": [1,2]},
+  {"algorithmType": "sorting", "array": [1,2,3], "comparing": [], "swapped": false, "sorted": [0,1,2]}
 ]`
 
     //call Gemini API 
