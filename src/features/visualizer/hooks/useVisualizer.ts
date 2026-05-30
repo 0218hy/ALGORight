@@ -2,17 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 import { algorithmRegistry } from "../algorithmRegistry";
 
 export function useVisualizer({
-    algorithmKey,
+    algorithmName,
     input,
     speed = 100, // 100 ms per step
 }: { // type definition
-    algorithmKey: keyof typeof algorithmRegistry;
+    algorithmName: string;
     input: number[];
     speed?: number;
 }) {
     const steps = useMemo(() => { // memoization
-        return algorithmRegistry[algorithmKey].run(input); // run the algorithm
-    }, [algorithmKey, input]); // rerun only when algorithmKey or input changes
+        const selected = algorithmRegistry.find(algo => algo.name === algorithmName);
+        return selected?.run(input) || [];
+    }, [algorithmName, input]); // rerun only when algorithmKey or input changes
 
     // states
     const [index, setIndex] = useState(0);

@@ -1,4 +1,5 @@
 import { bubbleSort } from "./algorithms/bubbleSort";
+import { testSort } from "./algorithms/testSort";
 import { Step } from "./step";
 
 export interface Algorithm {
@@ -6,6 +7,7 @@ export interface Algorithm {
     run: (input: number[]) => Step[];
 }
 
-export const algorithmRegistry = {
+export const algorithmRegistry: Algorithm[] = [
     bubbleSort,
-}
+    testSort,
+];
