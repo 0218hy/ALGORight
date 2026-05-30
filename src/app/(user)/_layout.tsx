@@ -24,11 +24,13 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: useClientOnlyValue(false, true),
       }}>
+
+      {/* Tab 1 - Home */}
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home Page',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Home',
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -45,13 +47,36 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      {/* Tab 2 - Learn */}
       <Tabs.Screen
-        name="two"
+        name="learn"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Learn',
+          tabBarIcon: ({ color }) => <TabBarIcon name="book" color={color} />,
         }}
       />
+
+      {/* Tab 3 — Challenge */}
+      <Tabs.Screen
+        name="challenge"
+        options={{
+          title: 'Challenge',
+          tabBarIcon: ({ color }) => <TabBarIcon name="trophy" color={color} />,
+        }}
+      />
+
+      {/* Tab 4 - Profile */}
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />
+        }}
+      />
+
+      {/* hidden screens */}
+      <Tabs.Screen name="two" options={{ href: null }} />
       <Tabs.Screen
         name="visualizer"
         options={{
