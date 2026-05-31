@@ -39,13 +39,13 @@ export default function HomePage() {
       <View style={styles.gridContainer}>
         <Pressable
           style={({ pressed }) => [styles.navCard, pressed && styles.cardPressed]}
-          onPress={() => router.navigate("./visualizer")}>
+          onPress={() => router.push('/visualizer')}>
           <Text style={styles.navCardText}> Algorithm Visualizer </Text>
         </Pressable>
 
         <Pressable
           style={({ pressed }) => [styles.navCard, pressed && styles.cardPressed]}
-          onPress={() => console.log("pressed")}>
+          onPress={() => router.push('/learn')}>
           <Text style={styles.navCardText}> Learning </Text>
         </Pressable>
 

@@ -2,7 +2,6 @@ import Button from '@/src/components/Button';
 import { Text } from '@/src/components/Themed';
 import Colors from '@/src/constants/Colors';
 import { algorithmRegistry } from '@/src/features/visualizer/algorithmRegistry';
-import { bubbleSort } from '@/src/features/visualizer/algorithms/bubbleSort';
 import { Controls } from '@/src/features/visualizer/components/Controls';
 import { SortingVisualizer } from '@/src/features/visualizer/components/SortingVisualizer';
 import { useVisualizer } from '@/src/features/visualizer/hooks/useVisualizer';
