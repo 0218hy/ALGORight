@@ -1,5 +1,6 @@
 {
   "name": "algoright",
+  "type": "module",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -35,6 +36,8 @@
   "devDependencies": {
     "@types/react": "~19.1.0",
     "react-test-renderer": "19.1.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.22.3",
     "typescript": "~5.9.2"
   },
   "private": true
