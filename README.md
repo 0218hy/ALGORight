@@ -8,7 +8,6 @@ Instead of memorizing algorithm steps from static notes, users can watch algorit
 
 🌟 **Our Goal:** Make learning algorithms more engaging, intuitive, and accessible for everyone.
 
----
 
 ## 🎯 Problem Statement
 
@@ -26,7 +25,6 @@ ALGORight addresses this challenge by providing:
 
 🎯 Personalised dashboard and learning recommendations to boost performance
 
----
 
 ## 🚀 Key Features
 
@@ -53,8 +51,6 @@ ALGORight addresses this challenge by providing:
 * Earn XP to unlock topics progressively 
 * Learning dashboard and personalised learning recommendations to track progress
 
----
-
 ## 🛠️ Tech Stack
 
 ### Frontend
@@ -72,13 +68,11 @@ ALGORight addresses this challenge by providing:
 * Figma
 * GitHub
 
----
 
 ## 🎥 Demo Video
 
 🔗 [Insert Demo Video Link]
 
----
 
 ## 📱 App Build
 
@@ -86,7 +80,7 @@ Download and try AlgoRight:
 
 🔗 [Insert Expo Build / APK Link]
 
----
+
 
 ## 💻 Source Code
 
@@ -94,51 +88,60 @@ As this repository is private, a zipped copy of the source code can be accessed 
 
 📦 [Insert Google Drive Zip Link]
 
----
+
+
+## 📱 App Access
+
+ALGORight is currently optimized for mobile devices and can be accessed through either of the following methods:
+
+### Option 1: Download the App Build (only works on Adroid Phone currently)
+
+Download and install the latest Android build:
+
+🔗 [Insert Expo Build / APK Link]
+
+### Option 2: Run Locally with Expo Go (recommended) 
+
+Follow the setup instructions below to run the project on your own device.
+
 
 ## ⚙️ Local Setup
 
-### Prerequisites
+### 1. Download the source code zip
 
-✅ Node.js v18+
-
-✅ npm
-
-✅ Expo Go
-
-### Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### Configure Environment Variables
+### 3. Configure Environment Variables
 
-Create a `.env` file:
+Create a `.env` file in the project root:
 
 ```env
-EXPO_PUBLIC_SUPABASE_URL=https://zsyxgvjoulzckhopyoqm.supabase.co 
+EXPO_PUBLIC_SUPABASE_URL=https://zsyxgvjoulzckhopyoqm.supabase.co
 EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzeXhndmpvdWx6Y2tob3B5b3FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MzY4ODUsImV4cCI6MjA5NDIxMjg4NX0.VkIMOFJ7TVZEkfhOO6DGQNvvduJdk6n_g0p0SDmxNUA
 ```
 
-### Run the App
+### 4. Start the Development Server
 
 ```bash
 npx expo start
 ```
 
-### Open on Mobile
+### 5. Launch on Mobile
 
-1. 📲 Install Expo Go 
-3. 🔍 Scan the QR code 
-4. 🎉 Start exploring AlgoRight!
+1. 📲 Install Expo Go on mobile 
+2. 📷 Scan the QR code generated in the terminal/browser
+3. 🚀 The app will automatically launch on your mobile device
+4. 🎉 Start exploring ALGORight!
 
----
 
 ## 👥 Team Members
 
 * Lee Hayoung
 * Pang Yi Jie 
----
+
 
 💡 Thank you for checking out AlgoRight! We hope it makes learning algorithms a little more fun and a lot more interactive.
