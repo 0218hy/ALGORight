@@ -27,8 +27,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home Page',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Home',
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -46,18 +46,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="profile"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="visualizer"
-        options={{
-          href: null,
-        }}
-      />
+      <Tabs.Screen name="visualizer" options={{ href: null }} />
+      <Tabs.Screen name="learn" options={{ href: null }} />
+      <Tabs.Screen name="summary/[id]" options={{ href: null }} />
+      <Tabs.Screen name="algorithm/[id]" options={{ href: null }} />
+      <Tabs.Screen name="flashcards/[id]" options={{ href: null }} />
     </Tabs>
   );
 }
