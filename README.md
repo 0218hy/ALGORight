@@ -71,38 +71,20 @@ ALGORight addresses this challenge by providing:
 
 ## 🎥 Demo Video
 
-🔗 [Insert Demo Video Link]
-
-
-## 📱 App Build
-
-Download and try AlgoRight:
-
-🔗 [Insert Expo Build / APK Link]
-
+🔗 https://drive.google.com/file/d/1LRw14F99yxjq_35LBgbDmSyHbCv92ltH/view?usp=sharing 
 
 
 ## 💻 Source Code
 
 As this repository is private, a zipped copy of the source code can be accessed here:
 
-📦 [Insert Google Drive Zip Link]
+📦 https://drive.google.com/file/d/1mrtt2rW5q4f4R4tih-DKY_5BrXT09YHj/view?usp=sharing
 
 
 
 ## 📱 App Access
 
-ALGORight is currently optimized for mobile devices and can be accessed through either of the following methods:
-
-### Option 1: Download the App Build (only works on Adroid Phone currently)
-
-Download and install the latest Android build:
-
-🔗 [Insert Expo Build / APK Link]
-
-### Option 2: Run Locally with Expo Go (recommended) 
-
-Follow the setup instructions below to run the project on your own device.
+ALGORight is currently optimized for mobile devices. 
 
 
 ## ⚙️ Local Setup
