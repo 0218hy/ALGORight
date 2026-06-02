@@ -24,3 +24,13 @@ export const SignOut = async () => {
     return { error }
 }
 
+// get user profile
+export const fetchUserProfile = async (userId: string) => {
+    const {data, error} = await supabase
+    .from("profiles")
+    .select('username, total_xp, current_level')
+    .eq('id', userId)
+    .single()
+    return {data, error}
+}
+

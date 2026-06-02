@@ -1,18 +1,17 @@
-
-import users from '@/assets/data/users';
 import { Text, View } from '@/src/components/Themed';
 import Colors from '@/src/constants/Colors';
+import { useAuthContext } from '@/src/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet } from 'react-native';
-
-const user = users[0];
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet } from 'react-native';
 
 export default function HomePage() {
   const router = useRouter();
+  const {profile, loading} = useAuthContext();
 
-  if (!user) {
-    return <Text>User not found</Text>;
+
+  if (loading) {
+    return <ActivityIndicator style={{ flex: 1 }} size="large" />;
   }
 
 
@@ -28,10 +27,10 @@ export default function HomePage() {
 
       {/* Profile Card */}
       <View style={styles.profileCard}>
-        <Text style={styles.name}> {user.name} </Text>
+        <Text style={styles.name}> {profile?.username} </Text>
         <View style={styles.rowContainer}>
-          <Text style={styles.value}> Ex: {user.xp}</Text>
-          <Text style={styles.value}> Level: {user.level}</Text>
+          <Text style={styles.value}> Ex: {profile?.total_xp}</Text>
+          <Text style={styles.value}> Level: {profile?.current_level}</Text>
         </View>
       </View>
 

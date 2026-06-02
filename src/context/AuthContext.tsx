@@ -2,11 +2,18 @@ import { Session, User } from '@supabase/supabase-js'
 import { createContext, ReactNode, useContext } from 'react'
 import { useAuth } from '../hooks/useAuth'
 
+export interface UserProfile {
+    username: string
+    total_xp: number
+    current_level: number
+}
+
 //define what the context holds
 interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
+  profile: UserProfile | null
 }
 
 //create context with default values 
@@ -15,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
   loading: true,
+  profile: null,
 })
 
 //create AuthProvider component 
