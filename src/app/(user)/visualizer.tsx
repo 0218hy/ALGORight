@@ -6,8 +6,8 @@ import { Controls } from '@/src/features/visualizer/components/Controls';
 import { SortingVisualizer } from '@/src/features/visualizer/components/SortingVisualizer';
 import { useVisualizer } from '@/src/features/visualizer/hooks/useVisualizer';
 import { useRouter } from "expo-router";
-import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 
@@ -22,14 +22,17 @@ export default function Visualizer() {
     const [items, setItems] = useState(
         algorithmRegistry.map((algo) => ({ value: algo.name, label: algo.name }))
     );
-    
+
     const visualizer = useVisualizer({
         algorithmName: algo,
         input: currentInput,
     })
 
+    const scrollViewRef = useRef<ScrollView>(null);
+
     // handle data input
     const handleLoadData = () => {
+
         const numberArray = inputText
             ? inputText
                 .split(' ')
@@ -44,66 +47,81 @@ export default function Visualizer() {
         } else {
             Alert.alert("Error", "No input detected. Key in space separated numbers!");
         }
+        Keyboard.dismiss(); 
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.screenView} showsVerticalScrollIndicator={false}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 80}
+            style={styles.container}
+        >
+            <ScrollView
+                contentContainerStyle={styles.screenView}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+                ref={scrollViewRef}>
 
-            {/* Visualization */}
-            <View style={styles.card}>
-                <Text style={styles.title}> Select Algorithm </Text>
-                <DropDownPicker
-                    open={open}
-                    value={algo}
-                    items={items}
-                    setOpen={setOpen}
-                    setValue={setAlgo}
-                    setItems={setItems}
-                    listMode='SCROLLVIEW'
-                />
+                {/* Visualization */}
+                <View style={styles.card}>
+                    <Text style={styles.title}> Select Algorithm </Text>
+                    <DropDownPicker
+                        open={open}
+                        value={algo}
+                        items={items}
+                        setOpen={setOpen}
+                        setValue={setAlgo}
+                        setItems={setItems}
+                        listMode='SCROLLVIEW'
+                    />
 
-                {/* Skia */}
-                <View style={styles.greyCard}>
-                    <SortingVisualizer step={visualizer.step} />
+                    {/* Skia */}
+                    <View style={styles.greyCard}>
+                        <SortingVisualizer step={visualizer.step} />
+                    </View>
+
+                    {/* Control */}
+                    <Controls
+                        isPlaying={visualizer.isPlaying}
+                        play={visualizer.play}
+                        pause={visualizer.pause}
+                        next={visualizer.next}
+                        prev={visualizer.prev}
+                        reset={visualizer.reset}
+                        index={visualizer.index}
+                        total={visualizer.total}
+                    />
                 </View>
 
-                {/* Control */}
-                <Controls
-                    isPlaying={visualizer.isPlaying}
-                    play={visualizer.play}
-                    pause={visualizer.pause}
-                    next={visualizer.next}
-                    prev={visualizer.prev}
-                    reset={visualizer.reset}
-                    index={visualizer.index}
-                    total={visualizer.total}
-                />
-            </View>
+                {/* Input & Load Data Card */}
+                <View style={styles.card}>
+                    <Text style={styles.title}> Custom Input </Text>
 
-            {/* Input & Load Data Card */}
-            <View style={styles.card}>
-                <Text style={styles.title}> Custom Input </Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Eg. 5 3 8 4 1 2"
+                        placeholderTextColor="#888"
+                        keyboardType='numbers-and-punctuation'
+                        value={inputText}
+                        onChangeText={setInputText}
+                        onFocus={() => {
+                            setTimeout(() => {
+                                scrollViewRef.current?.scrollToEnd({ animated: true });
+                            }, 100); // Small timeout allows keyboard transition to start first
+                        }}
+                    />
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Eg. 5 3 8 4 1 2"
-                    placeholderTextColor="#888"
-                    keyboardType='numbers-and-punctuation'
-                    value={inputText}
-                    onChangeText={setInputText}
-                />
-
-                <Button text="Load Data"
-                    onPress={handleLoadData}
-                />
-            </View>
-        </ScrollView>
+                    <Button text="Load Data"
+                        onPress={handleLoadData}
+                    />
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     screenView: {
-        flex: 1,
         padding: 10,
         justifyContent: 'flex-start',
         backgroundColor: 'white',
@@ -148,6 +166,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginVertical: 5,
         color: '#000',
+    },
+    container: {
+        flex: 1,
+        backgroundColor: 'white',
     },
 
 
