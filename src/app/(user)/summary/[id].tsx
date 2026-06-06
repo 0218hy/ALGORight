@@ -9,7 +9,7 @@ export default function SummaryScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const { summary, loading } = useAlgorithmSummary(id)
 
-  return (
+  return ( 
     <> 
       <Stack.Screen 
         options={{ 
@@ -20,7 +20,7 @@ export default function SummaryScreen() {
               <FontAwesome name="chevron-left" size={18} color={Colors.potato.darker} />
             </Pressable>
           )
-        }} 
+        }}
       />
       <ScrollView
         contentContainerStyle={styles.container}
@@ -35,6 +35,6 @@ export default function SummaryScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    backgroundColor: 'white',
+    backgroundColor: Colors.potato.background,
   },
 })
