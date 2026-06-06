@@ -1,6 +1,9 @@
+import { LearningHeader } from '@/src/components/LearningHeader'
 import Colors from '@/src/constants/Colors'
 import { FlashcardCard } from '@/src/features/learning/components/FlashCard'
+import { useAlgorithm } from '@/src/hooks/useAlgorithm'
 import { useFlashcards } from '@/src/hooks/useFlashcards'
+import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { useLocalSearchParams } from 'expo-router'
 import { useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
@@ -8,7 +11,8 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 export default function FlashcardsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const { flashcards, loading } = useFlashcards(id)
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [ currentIndex, setCurrentIndex ] = useState(0)
+  const { algorithm, loading: algorithmLoading } = useAlgorithm(id)
 
   if (loading) {
     return (
@@ -31,6 +35,13 @@ export default function FlashcardsScreen() {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
+       <LearningHeader
+          label="Flashcards"
+          icon="clone"
+          category={algorithm?.category ?? 'Algorithm'}
+          title={algorithm?.title ?? 'Algorithm'}
+        />
+
       {/* Current flashcard */}
       <FlashcardCard
         flashcard={flashcards[currentIndex]}
@@ -45,7 +56,14 @@ export default function FlashcardsScreen() {
           onPress={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
           disabled={currentIndex === 0}
         >
-          <Text style={styles.navButtonText}>← Prev</Text>
+          <View style={styles.buttonContent}>
+            <FontAwesome 
+              name="chevron-left"
+              size={14}
+              color='#ffffff'
+             />
+            <Text style={styles.navButtonText}>Prev</Text>
+          </View>
         </Pressable>
 
         <Pressable
@@ -53,7 +71,14 @@ export default function FlashcardsScreen() {
           onPress={() => setCurrentIndex(prev => Math.min(flashcards.length - 1, prev + 1))}
           disabled={currentIndex === flashcards.length - 1}
         >
-          <Text style={styles.navButtonText}>Next →</Text>
+          <View style={styles.buttonContent}>
+            <Text style={styles.navButtonText}>Next</Text>
+            <FontAwesome 
+              name="chevron-right"
+              size={14}
+              color='#ffffff'
+             />
+          </View>
         </Pressable>
       </View>
 
@@ -64,7 +89,7 @@ export default function FlashcardsScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    backgroundColor: 'white',
+    backgroundColor: Colors.potato.background,
     flexGrow: 1,
   },
   centered: {
@@ -79,12 +104,23 @@ const styles = StyleSheet.create({
   },
   navButton: {
     backgroundColor: Colors.potato.darker,
-    paddingVertical: 12,
+    paddingVertical: 15,
     paddingHorizontal: 25,
-    borderRadius: 10,
+    borderRadius: 30,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 1.5,
+    elevation: 2,
   },
   disabled: {
-    backgroundColor: '#E5E5EA',
+    backgroundColor: Colors.potato.border,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   navButtonText: {
     color: '#ffffff',

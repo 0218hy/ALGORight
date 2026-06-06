@@ -22,6 +22,7 @@ export default {
     background: '#fcf8f2', // Potato Flesh Cream
     darker: '#542706ff',
     warm: '#ffddc2',
+    border: '#e2d9d2',
     tint: tintColorPotato,
     tabIconSelected: tintColorPotato,
   },

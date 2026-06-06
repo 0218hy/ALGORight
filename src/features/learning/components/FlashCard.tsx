@@ -1,7 +1,7 @@
 import Colors from '@/src/constants/Colors'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { useState } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { useEffect, useRef, useState } from 'react'
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
 
 interface Flashcard {
   id: string
@@ -20,14 +20,29 @@ export function FlashcardCard({ flashcard, index, total }: Props) {
   const [flipped, setFlipped] = useState(false)
   const progressPercent = ((index + 1) / total) * 100
 
+  const scaleAnim = useRef(new Animated.Value(1)).current
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.97,
+      useNativeDriver: true,
+    }).start()
+  }
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      friction: 5,
+      tension: 150,
+      useNativeDriver: true,
+    }).start()
+  }
+
+  useEffect(() => {
+    setFlipped(false)
+  }, [flashcard.id])
+
   return (
     <View style={styles.container}>
-      <View style={styles.topRow}>
-        <View style={styles.topicPill}>
-          <FontAwesome name="clone" size={12} color={Colors.potato.darker} />
-          <Text style={styles.topicText}>Flashcard</Text>
-        </View>
-
         <View style={styles.progressContainer}>
           <Text style={styles.progressText}>
             Card {index + 1} of {total}
@@ -36,46 +51,54 @@ export function FlashcardCard({ flashcard, index, total }: Props) {
             <View style={[styles.progressFill, { width: `${progressPercent}%` }]} />
           </View>
         </View>
-      </View>
 
       <Pressable
-        style={[styles.card, flipped && styles.cardFlipped]}
         onPress={() => setFlipped(!flipped)}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
       >
-        <View style={styles.holePunch} />
+        <Animated.View
+          style={[
+            styles.card,
+            flipped && styles.cardFlipped,
+            { transform: [{ scale: scaleAnim }] },
+          ]}
+        >
+          <View style={styles.holePunch} />
 
-        {!flipped ? (
-          <View style={styles.cardContent}>
-            <View style={styles.iconContainer}>
-              <FontAwesome
-                name="lightbulb-o"
-                size={24}
-                color={Colors.potato.darker}
-              />
+          {!flipped ? (
+            <View style={styles.cardContent}>
+              <View style={styles.iconContainer}>
+                <FontAwesome
+                  name="lightbulb-o"
+                  size={24}
+                  color={Colors.potato.tint}
+                />
+              </View>
+
+              <Text style={styles.cardLabel}>Question</Text>
+              <Text style={styles.questionText}>{flashcard.question}</Text>
+
+              <View style={styles.tapRow}>
+                <Text style={styles.tapHint}>Tap to reveal answer</Text>
+                <FontAwesome name="refresh" size={12} color={Colors.potato.tint} />
+              </View>
             </View>
+          ) : (
+            <View style={styles.cardContent}>
+              <Text style={styles.answerLabel}>Answer</Text>
 
-            <Text style={styles.cardLabel}>Question</Text>
-            <Text style={styles.questionText}>{flashcard.question}</Text>
+              <View style={styles.answerBox}>
+                <Text style={styles.answerText}>{flashcard.answer}</Text>
+              </View>
 
-            <View style={styles.tapRow}>
-              <Text style={styles.tapHint}>Tap to reveal answer</Text>
-              <FontAwesome name="refresh" size={12} color={Colors.potato.text} />
+              <View style={styles.tapRow}>
+                <Text style={styles.flippedHint}>Tap to see question</Text>
+                <FontAwesome name="check-circle" size={12} color= {Colors.potato.warm} />
+              </View>
             </View>
-          </View>
-        ) : (
-          <View style={styles.cardContent}>
-            <Text style={styles.answerLabel}>Answer</Text>
-
-            <View style={styles.answerBox}>
-              <Text style={styles.answerText}>{flashcard.answer}</Text>
-            </View>
-
-            <View style={styles.tapRow}>
-              <Text style={styles.flippedHint}>Tap to see question</Text>
-              <FontAwesome name="check-circle" size={13} color="#ffddc2" />
-            </View>
-          </View>
-        )}
+          )}
+        </Animated.View>
       </Pressable>
     </View>
   )
@@ -87,33 +110,23 @@ const styles = StyleSheet.create({
     gap: 18,
   },
 
-  topRow: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 12,
-  },
-
-  topicPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: Colors.potato.background,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: Colors.potato.background,
-  },
-
-  topicText: {
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    color: Colors.potato.text,
-  },
+  label: {
+      fontSize: 12,
+      fontWeight: '800',
+      letterSpacing: 1.2,
+      color: Colors.potato.darker,
+      textTransform: 'uppercase',
+      marginBottom: -8,
+      paddingLeft: 4
+    },
+  
+    title: {
+      fontSize: 30,
+      fontWeight: '800',
+      color: Colors.potato.text,
+      marginBottom: 4,
+      paddingLeft: 4,
+    },
 
   progressContainer: {
     flex: 1,
@@ -130,10 +143,12 @@ const styles = StyleSheet.create({
   },
 
   progressTrack: {
-    width: 130,
+    width: 180,
     height: 7,
     borderRadius: 999,
-    backgroundColor: Colors.potato.tint,
+    backgroundColor: Colors.light.background,
+    borderWidth: 1,
+    borderColor: '#a37243',
     overflow: 'hidden',
   },
 
@@ -153,17 +168,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.potato.tint,
-    shadowColor: '#381b06',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    elevation: 4,
+    borderColor: Colors.potato.border,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 1.5,
+    elevation: 2,
   },
 
   cardFlipped: {
     backgroundColor: Colors.potato.tint,
-    borderColor: Colors.potato.darker,
+    borderColor: Colors.potato.tint,
   },
 
   holePunch: {
@@ -188,7 +204,7 @@ const styles = StyleSheet.create({
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: '#ffddc2',
+    backgroundColor: Colors.potato.warm,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 4,
@@ -197,7 +213,7 @@ const styles = StyleSheet.create({
   cardLabel: {
     fontSize: 12,
     fontWeight: '800',
-    color: Colors.potato.darker,
+    color: Colors.potato.tint,
     textTransform: 'uppercase',
     letterSpacing: 1.2,
   },
@@ -205,7 +221,7 @@ const styles = StyleSheet.create({
   answerLabel: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#ffddc2',
+    color: Colors.potato.warm,
     textTransform: 'uppercase',
     letterSpacing: 1.2,
   },
@@ -220,12 +236,12 @@ const styles = StyleSheet.create({
   },
 
   answerBox: {
-    backgroundColor: Colors.potato.background,
+    backgroundColor: Colors.potato.warm,
     borderRadius: 16,
     paddingVertical: 18,
     paddingHorizontal: 20,
     borderLeftWidth: 5,
-    borderLeftColor: '#ffddc2',
+    borderLeftColor: Colors.potato.darker,
     width: '100%',
   },
 
@@ -238,9 +254,6 @@ const styles = StyleSheet.create({
   },
 
   tapRow: {
-    position: 'absolute',
-    bottom: -48,
-    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
@@ -248,16 +261,16 @@ const styles = StyleSheet.create({
 
   tapHint: {
     fontSize: 11,
-    color: Colors.potato.text,
+    color: Colors.potato.tint,
     opacity: 0.7,
     textTransform: 'uppercase',
-    fontWeight: '700',
+    fontWeight: '800',
     letterSpacing: 0.8,
   },
 
   flippedHint: {
     fontSize: 11,
-    color: '#ffddc2',
+    color: Colors.potato.warm,
     opacity: 0.9,
     textTransform: 'uppercase',
     fontWeight: '700',

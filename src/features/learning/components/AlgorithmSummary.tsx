@@ -14,11 +14,10 @@ interface AlgorithmSummaryData {
 interface Props {
   summary: AlgorithmSummaryData | null
   loading: boolean
-  algorithmTitle: string
-  algorithmCategory: string
 }
 
-export function AlgorithmSummary({ summary, loading, algorithmTitle, algorithmCategory }: Props) {
+export function AlgorithmSummary({ summary, loading }: Props) {
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -37,16 +36,13 @@ export function AlgorithmSummary({ summary, loading, algorithmTitle, algorithmCa
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{algorithmCategory} algorithm</Text>
-      <Text style={styles.title}>{algorithmTitle}</Text>
-
       {/* Core Idea */}
       <View style={styles.card}>
         <View style={styles.titleRow}>
           <View style={styles.iconContainer}>
             <FontAwesome
               name="lightbulb-o"
-              size={24}
+              size={28}
               color={Colors.potato.darker}
             />
           </View>
@@ -75,7 +71,7 @@ export function AlgorithmSummary({ summary, loading, algorithmTitle, algorithmCa
           <View style={styles.iconContainer}>
             <FontAwesome
                 name="gear"
-                size={24}
+                size={28}
                 color={Colors.potato.darker}
               />
             </View>
@@ -112,7 +108,7 @@ export function AlgorithmSummary({ summary, loading, algorithmTitle, algorithmCa
           <View style={styles.iconContainer}>
             <FontAwesome
                 name="check-circle"
-                size={24}
+                size={28}
                 color={Colors.potato.darker}
               />
             </View>
@@ -134,7 +130,7 @@ export function AlgorithmSummary({ summary, loading, algorithmTitle, algorithmCa
           <View style={styles.iconContainer}>
             <FontAwesome
                 name="bullseye"
-                size={24}
+                size={28}
                 color={Colors.potato.darker}
               />
             </View>
@@ -176,12 +172,13 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingHorizontal: 24,
     borderWidth: 1,
-    borderColor: '#e2d9d2',
-    shadowColor: '#381b06',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.08,
-    shadowRadius: 14,
-    elevation: 5,
+    borderColor: Colors.potato.border,
+    
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 1.5,
+    elevation: 2,
   },
 
   titleRow: {
@@ -193,10 +190,9 @@ const styles = StyleSheet.create({
   },
 
   iconContainer: {
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     borderRadius: 20,
-    backgroundColor: Colors.potato.warm,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -226,10 +222,11 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 16,
     alignItems: 'center',
-    shadowColor: '#381b06',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 1.5,
     elevation: 2,
   },
 
