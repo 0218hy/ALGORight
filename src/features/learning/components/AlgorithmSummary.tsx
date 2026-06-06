@@ -14,9 +14,11 @@ interface AlgorithmSummaryData {
 interface Props {
   summary: AlgorithmSummaryData | null
   loading: boolean
+  algorithmTitle: string
+  algorithmCategory: string
 }
 
-export function AlgorithmSummary({ summary, loading }: Props) {
+export function AlgorithmSummary({ summary, loading, algorithmTitle, algorithmCategory }: Props) {
   if (loading) {
     return (
       <View style={styles.container}>
@@ -35,8 +37,8 @@ export function AlgorithmSummary({ summary, loading }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>SORTING ALGORITHM</Text>
-      <Text style={styles.title}>Bubble Sort</Text>
+      <Text style={styles.label}>{algorithmCategory} algorithm</Text>
+      <Text style={styles.title}>{algorithmTitle}</Text>
 
       {/* Core Idea */}
       <View style={styles.card}>
@@ -174,7 +176,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingHorizontal: 24,
     borderWidth: 1,
-    borderColor: '#d3c8bf',
+    borderColor: '#e2d9d2',
     shadowColor: '#381b06',
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.08,
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#ffddc2',
+    backgroundColor: Colors.potato.warm,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -233,7 +235,7 @@ const styles = StyleSheet.create({
 
   badgeLabel: {
     fontSize: 14,
-    color: '#ffddc2',
+    color: Colors.potato.warm,
     marginBottom: 4,
     fontWeight: '700',
   },

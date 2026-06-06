@@ -4,7 +4,7 @@ import { useFlashcards } from '@/src/hooks/useFlashcards'
 import { useLocalSearchParams } from 'expo-router'
 import { useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-
+ 
 export default function FlashcardsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const { flashcards, loading } = useFlashcards(id)

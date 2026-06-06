@@ -1,13 +1,18 @@
+import { TopicPill } from '@/src/components/TopicPill'
 import Colors from '@/src/constants/Colors'
 import { AlgorithmSummary } from '@/src/features/learning/components/AlgorithmSummary'
 import { useAlgorithmSummary } from '@/src/hooks/useAlgorithmSummary'
+import { useAlgorithms } from '@/src/hooks/useAlgorithms'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
 import { Pressable, ScrollView, StyleSheet } from 'react-native'
 
 export default function SummaryScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { summary, loading } = useAlgorithmSummary(id)
+  const { summary, loading: summaryLoading } = useAlgorithmSummary(id)
+  const { algorithms, loading: algorithmsLoading } = useAlgorithms()
+
+  const algorithm = algorithms.find((algo) => algo.id == id)
 
   return ( 
     <> 
@@ -26,7 +31,16 @@ export default function SummaryScreen() {
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
-        <AlgorithmSummary summary={summary} loading={loading} />
+        <TopicPill
+          label="Summary"
+          icon="file-text"
+        />
+        <AlgorithmSummary 
+          summary={summary} 
+          loading={summaryLoading || algorithmsLoading} 
+          algorithmTitle={algorithm?.title ?? 'Algorithm'}
+          algorithmCategory={algorithm?.category ?? 'Algorithm'}
+        />
       </ScrollView>
     </>
   )

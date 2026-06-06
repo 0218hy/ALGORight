@@ -21,6 +21,7 @@ export default {
     text: '#381b06ff', // Dark Espresso Earth
     background: '#fcf8f2', // Potato Flesh Cream
     darker: '#542706ff',
+    warm: '#ffddc2',
     tint: tintColorPotato,
     tabIconSelected: tintColorPotato,
   },
