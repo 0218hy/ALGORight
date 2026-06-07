@@ -56,7 +56,7 @@ export default function HomePage() {
 
         <Pressable
           style={({ pressed }) => [styles.navCard, pressed && styles.cardPressed]}
-          onPress={() => router.push('/challenge/FilterForm')}>
+          onPress={() => router.push('/challenge')}>
           <Text style={styles.navCardText}> Challenges </Text>
         </Pressable>
 

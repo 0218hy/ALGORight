@@ -1,11 +1,15 @@
+import { fetchFromApi } from '@/scripts/challengeProblem';
 import Colors from '@/src/constants/Colors';
+import { getQuestionFromDB } from '@/src/lib/queries/challenge';
+import { Href, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  Alert
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
@@ -20,11 +24,13 @@ interface FilterFormData {
 
 const DEFAULT_FILTERS: FilterFormData = {
   difficulty: 'Easy',
-  topicTagSlug: 'All',
+  topicTagSlug: 'Sorting',
 };
 
-export default function FilterForm() {
+export default function ChallengeScreen() {
+  const router = useRouter();
   const [formData, setFormData] = useState<FilterFormData>(DEFAULT_FILTERS);
+  const [loading, setLoading] = useState<boolean>(false); 
 
   // Difficulty
   const [openDifficulty, setOpenDifficulty] = useState(false);
@@ -58,8 +64,32 @@ export default function FilterForm() {
     console.log('Filters reset to defaults:', DEFAULT_FILTERS);
   };
 
-  const handleSubmit = () => {
-    console.log('Form Submitted. Current Parameters:', formData);
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      
+      // get from DB if there is matching question
+      let slugToOpen = null;
+      const existingQuestion = await getQuestionFromDB(formData.difficulty, formData.topicTagSlug);
+      
+      // if not, get from api 
+      if (existingQuestion) {
+        slugToOpen = existingQuestion.leetcode_slug;
+      } else {
+        slugToOpen = await fetchFromApi(formData.difficulty, formData.topicTagSlug);
+      }
+  
+      if (slugToOpen) {
+        const routePath = `/challenge/${slugToOpen}` as Href;
+        router.push(routePath);
+      } else {
+        Alert.alert("Not Found", "No questions match this criteria on LeetCode.");
+      }
+    } catch (err) {
+      Alert.alert("Error", "Something went wrong fetching the challenge.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
