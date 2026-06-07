@@ -48,3 +48,20 @@ export const getQuestionFromDB = async (difficulty: Difficulty, tag: string): Pr
   return data as LeetCodeQuestion | null;
 };
 
+export const fetchFromApi = async (difficulty: Difficulty, tag: string): Promise<string | null> => {
+  try {
+      console.log('Getting Leetcode question...');
+
+      const { data, error } = await supabase.functions.invoke('get_leetcode_problem', {
+          body: { difficulty, tag },
+      });
+
+      if (error) throw error;
+
+      return data?.leetcode_slug || null;
+      
+  } catch (err) {
+      console.error("Failed to get Leetcode question:", err);
+      throw err;
+  }
+};

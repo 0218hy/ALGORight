@@ -1,6 +1,6 @@
-import { fetchFromApi } from '@/scripts/challengeProblem';
+
 import Colors from '@/src/constants/Colors';
-import { getQuestionFromDB } from '@/src/lib/queries/challenge';
+import { getQuestionFromDB, fetchFromApi} from '@/src/lib/queries/challenge';
 import { Href, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -77,6 +77,7 @@ export default function ChallengeScreen() {
         slugToOpen = existingQuestion.leetcode_slug;
       } else {
         slugToOpen = await fetchFromApi(formData.difficulty, formData.topicTagSlug);
+        console.log("Front-end received slug back:", slugToOpen);
       }
   
       if (slugToOpen) {
