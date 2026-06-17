@@ -66,8 +66,7 @@ export default function ProblemDetailScreen() {
     }
 
     const hints: string[] = question.metadata_json?.hints || [];
-    const testcases: string = question.metadata_json?.exampleTestcases || "";
-
+   
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
             {/* Back Navigation */}
@@ -127,6 +126,7 @@ export default function ProblemDetailScreen() {
                         code: { fontFamily: 'monospace', backgroundColor: '#f6f8fa', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4, color: '#cf222e' },
                         strong: { fontWeight: '700', color: Colors.potato.darker },
                         li: { color: Colors.potato.text, fontSize: 15, lineHeight: 24, marginBottom: 4 },
+                        font: { fontSize: 15, lineHeight: 24 },
                         pre: {
                             backgroundColor: '#f3eae0',
                             paddingVertical: 2,

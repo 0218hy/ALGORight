@@ -1,18 +1,18 @@
 
 import Colors from '@/src/constants/Colors';
-import { getQuestionFromDB, fetchFromApi} from '@/src/lib/queries/challenge';
+import { fetchFromApi, getQuestionsFromDB, LeetCodeQuestion } from '@/src/lib/queries/challenge';
 import { Href, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import React, { useState, useCallback } from 'react';
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Alert
+  View
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-
 
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
 type TopicTag = 'All' | 'Sorting';
@@ -30,7 +30,8 @@ const DEFAULT_FILTERS: FilterFormData = {
 export default function ChallengeScreen() {
   const router = useRouter();
   const [formData, setFormData] = useState<FilterFormData>(DEFAULT_FILTERS);
-  const [loading, setLoading] = useState<boolean>(false); 
+  const [loading, setLoading] = useState<boolean>(false);
+  const [questionsList, setQuestionsList] = useState<LeetCodeQuestion[]>([]);
 
   // Difficulty
   const [openDifficulty, setOpenDifficulty] = useState(false);
@@ -59,39 +60,46 @@ export default function ChallengeScreen() {
     }));
   };
 
-  const handleReset = () => {
-    setFormData(DEFAULT_FILTERS);
-    console.log('Filters reset to defaults:', DEFAULT_FILTERS);
-  };
+  useFocusEffect(
+    useCallback(() => {
+      handleFilterSubmit();
+    }, [formData.difficulty, formData.topicTagSlug])
+  );
 
-  const handleSubmit = async () => {
+  const handleFilterSubmit = async () => {
     try {
       setLoading(true);
-      
-      // get from DB if there is matching question
-      let slugToOpen = null;
-      const existingQuestion = await getQuestionFromDB(formData.difficulty, formData.topicTagSlug);
-      
-      // if not, get from api 
-      if (existingQuestion) {
-        slugToOpen = existingQuestion.leetcode_slug;
-      } else {
-        slugToOpen = await fetchFromApi(formData.difficulty, formData.topicTagSlug);
-        console.log("Front-end received slug back:", slugToOpen);
-      }
-  
-      if (slugToOpen) {
-        const routePath = `/challenge/${slugToOpen}` as Href;
+      const data = await getQuestionsFromDB(formData.difficulty, formData.topicTagSlug);
+      setQuestionsList(data);
+    } catch (err) {
+      Alert.alert("Error", "Failed to retrieve matching challenges.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleGenerateNew = async () => {
+    try {
+      setLoading(true);
+      const newSlug = await fetchFromApi(formData.difficulty, formData.topicTagSlug);
+
+      if (newSlug) {
+        const routePath = `/challenge/${newSlug}` as Href;
         router.push(routePath);
       } else {
         Alert.alert("Not Found", "No questions match this criteria on LeetCode.");
       }
     } catch (err) {
-      Alert.alert("Error", "Something went wrong fetching the challenge.");
+      Alert.alert("Error", "Something went wrong generating the challenge.");
     } finally {
       setLoading(false);
     }
   };
+
+  const handleSelectQuestion = (slug: string) => {
+    const routePath = `/challenge/${slug}` as Href;
+    router.push(routePath);
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -130,14 +138,42 @@ export default function ChallengeScreen() {
 
       {/* Control Buttons */}
       <View style={styles.actionGroup}>
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <TouchableOpacity style={styles.submitButton} onPress={handleFilterSubmit}>
           <Text style={styles.submitButtonText}>Filter Problems</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-          <Text style={styles.resetButtonText}>Reload</Text>
+        <TouchableOpacity style={styles.resetButton} onPress={handleGenerateNew}>
+          <Text style={styles.resetButtonText}>Generate New</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Question Map */}
+      <View style={styles.listWrapper}>
+        <Text style={styles.listTitle}>Matching Challenges</Text>
+
+        {questionsList.length === 0 ? (
+          <Text style={styles.fallbackText}>No items loaded. Select filters or generate a fresh challenge above.</Text>
+        ) : (
+          questionsList.map((item, index) => {
+            return (
+              <TouchableOpacity
+                key={item.leetcode_slug + index}
+                style={styles.questionListItem}
+                onPress={() => handleSelectQuestion(item.leetcode_slug)}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.questionTitleText}>{item.title}</Text>
+                  <Text style={styles.questionSubtitleText}>
+                    {formData.topicTagSlug} • {formData.difficulty}
+                  </Text>
+                </View>
+                <Text style={styles.chevron}>→</Text>
+              </TouchableOpacity>
+            );
+          })
+        )}
+      </View>
+
     </ScrollView>
   );
 }
@@ -176,7 +212,7 @@ const styles = StyleSheet.create({
   actionGroup: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: 12,
+    marginTop: 6,
   },
   submitButton: {
     flex: 2,
@@ -206,4 +242,48 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15,
   },
+  listWrapper: {
+    marginTop: 28,
+  },
+  listTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: Colors.potato.text,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  questionListItem: {
+    backgroundColor: '#ffffff',
+    padding: 16,
+    borderRadius: 6,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#e8e8e8',
+  },
+  questionTitleText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#2c3e50',
+  },
+  questionSubtitleText: {
+    fontSize: 12,
+    color: '#7f8c8d',
+    marginTop: 4,
+  },
+  chevron: {
+    fontSize: 18,
+    color: '#bbb',
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  fallbackText: {
+    textAlign: 'center',
+    color: '#888',
+    fontSize: 13,
+    marginVertical: 30,
+    fontStyle: 'italic',
+  }
 });

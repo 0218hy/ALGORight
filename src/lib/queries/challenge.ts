@@ -53,7 +53,7 @@ export const getQuizBySlug = async (leetcode_slug: string): Promise<QuizQuestion
   return data?.quiz_json as QuizQuestion[] | null;
 };
 
-export const getQuestionFromDB = async (difficulty: Difficulty, tag: string): Promise<LeetCodeQuestion | null> => {
+export const getQuestionsFromDB = async (difficulty: Difficulty, tag: string): Promise<LeetCodeQuestion[]> => {
   // to handle all tag
   let query = supabase
     .from('challenge_leetcode')
@@ -65,14 +65,14 @@ export const getQuestionFromDB = async (difficulty: Difficulty, tag: string): Pr
     query = query.contains('tags', [tag.toLowerCase()]);
   }
 
-  const { data, error } = await query.limit(1).maybeSingle();
+  const { data, error } = await query;
 
   if (error) {
     console.error('Database fetch failed:', error);
     throw error;
   }
   
-  return data as LeetCodeQuestion | null;
+  return (data as LeetCodeQuestion[]) || [];
 };
 
 export const fetchFromApi = async (difficulty: Difficulty, tag: string): Promise<string | null> => {
