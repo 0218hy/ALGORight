@@ -49,7 +49,7 @@ export default function ProblemDetailScreen() {
         return (
             <View style={[styles.centered, { backgroundColor: Colors.potato.background }]}>
                 <ActivityIndicator size="large" color={Colors.potato.darker} />
-                <Text style={[styles.loadingText, { color: Colors.potato.text }]}>Preparing Workspace...</Text>
+                <Text style={[styles.loadingText, { color: Colors.potato.text }]}>Loading...</Text>
             </View>
         );
     }
@@ -78,6 +78,7 @@ export default function ProblemDetailScreen() {
             >
                 <Text style={styles.backNavigationText}>← Back</Text>
             </TouchableOpacity>
+
             {/* Header Card */}
             <View style={styles.headerCard}>
                 <Text style={styles.title}>{question.title}</Text>
@@ -141,6 +142,14 @@ export default function ProblemDetailScreen() {
                     }}
                 />
             </View>
+
+            <TouchableOpacity
+                style={styles.quizLaunchButton}
+                activeOpacity={0.8}
+                onPress={() => router.push(`/challenge/quiz/${question.leetcode_slug}`)}
+            >
+                <Text style={styles.quizLaunchButtonText}>💡 Test Your Concept Strategy →</Text>
+            </TouchableOpacity>
 
             {/* Accordion Hint List View */}
             {hints.length > 0 && (
@@ -376,5 +385,22 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#8b5a2b', // Using your exact tintColorPotato string
         letterSpacing: 0.3,
+    },
+    quizLaunchButton: {
+        backgroundColor: '#ff3333', 
+        paddingVertical: 14,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 16,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: '#E67E22',
+    },
+    quizLaunchButtonText: {
+        color: '#ffffff',
+        fontWeight: '800',
+        fontSize: 15,
+
     },
 });
