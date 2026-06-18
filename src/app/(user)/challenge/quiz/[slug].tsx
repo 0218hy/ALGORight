@@ -15,7 +15,6 @@ import {
 
 export default function QuizScreen() {
     const { slug } = useLocalSearchParams<{ slug: string }>();
-    const { width } = useWindowDimensions();
 
     const [questions, setQuestions] = useState<QuizQuestion[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -23,6 +22,7 @@ export default function QuizScreen() {
     const [submittedQuestions, setSubmittedQuestions] = useState<{ [key: number]: boolean }>({});
 
     useEffect(() => {
+        // get quiz if alr in db else generate new 
         const fetchOrGenerateQuiz = async () => {
             if (!slug) return;
 
@@ -47,28 +47,8 @@ export default function QuizScreen() {
                     );
                 }
 
-                let finalQuizData: QuizQuestion[] = [];
-                if (quizData) {
-                    // Scenario A: It came from the DB cache and is wrapped in an object { quiz_json: [...] }
-                    if (!Array.isArray(quizData) && (quizData as any).quiz_json) {
-                        finalQuizData = (quizData as any).quiz_json;
-                    }
-                    // Scenario B: It came straight from the Edge Function array response [...]
-                    else if (Array.isArray(quizData)) {
-                        finalQuizData = quizData;
-                    }
-                    // Scenario C: It came back as a raw JSON string that needs parsing
-                    else if (typeof quizData === 'string') {
-                        try {
-                            finalQuizData = JSON.parse(quizData);
-                        } catch (e) {
-                            console.error("Failed to parse quizData string", e);
-                        }
-                    }
-                }
-
-                if (finalQuizData && finalQuizData.length > 0) {
-                    setQuestions(finalQuizData);
+                if (quizData && quizData.length > 0) {
+                    setQuestions(quizData);
                 } else {
                     throw new Error("Failed to retrieve valid quiz structure.");
                 }

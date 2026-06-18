@@ -135,7 +135,6 @@ export default function ProblemDetailScreen() {
                             borderWidth: 1,
                             borderColor: '#e4d5c3',
                             marginVertical: 5,
-                            // Ensures the raw line breaks inside your database string are strictly followed
                             whiteSpace: 'pre',
                             fontFamily: 'monospace',
                         }
