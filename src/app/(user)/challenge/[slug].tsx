@@ -1,5 +1,5 @@
 import Colors from '@/src/constants/Colors';
-import { getQuestionBySlug, LeetCodeQuestion } from '@/src/lib/queries/challenge';
+import { getLeetcodeQuestionBySlug, LeetCodeQuestion } from '@/src/lib/queries/challenge';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
@@ -28,7 +28,7 @@ export default function ProblemDetailScreen() {
             if (!slug) return;
             try {
                 setLoading(true);
-                const data = await getQuestionBySlug(slug);
+                const data = await getLeetcodeQuestionBySlug(slug);
                 setQuestion(data);
             } catch (error) {
                 console.error(error);

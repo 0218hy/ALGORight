@@ -1,6 +1,6 @@
 
 import Colors from '@/src/constants/Colors';
-import { fetchFromApi, getQuestionsFromDB, LeetCodeQuestion } from '@/src/lib/queries/challenge';
+import { fetchLeetcodeFromApi, getLeetcodeQuestionsFromDB, LeetCodeQuestion } from '@/src/lib/queries/challenge';
 import { Href, useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import React, { useState, useCallback } from 'react';
@@ -69,7 +69,7 @@ export default function ChallengeScreen() {
   const handleFilterSubmit = async () => {
     try {
       setLoading(true);
-      const data = await getQuestionsFromDB(formData.difficulty, formData.topicTagSlug);
+      const data = await getLeetcodeQuestionsFromDB(formData.difficulty, formData.topicTagSlug);
       setQuestionsList(data);
     } catch (err) {
       Alert.alert("Error", "Failed to retrieve matching challenges.");
@@ -81,7 +81,7 @@ export default function ChallengeScreen() {
   const handleGenerateNew = async () => {
     try {
       setLoading(true);
-      const newSlug = await fetchFromApi(formData.difficulty, formData.topicTagSlug);
+      const newSlug = await fetchLeetcodeFromApi(formData.difficulty, formData.topicTagSlug);
 
       if (newSlug) {
         const routePath = `/challenge/${newSlug}` as Href;

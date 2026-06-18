@@ -20,3 +20,17 @@ export const getAlgorithmById = async (id: string) => {
 
     return { data, error }    
 }
+
+export const getAlgorithmNameById = async (id:string): Promise<string> => {
+    const { data, error } = await supabase
+        .from('algorithms')
+        .select('title')
+        .eq('id', id)
+        .maybeSingle();
+
+        if (error || !data?.title) {
+            console.error(`Failed to fetch algorithm name:`, error);
+            throw new Error(`Failed to fetch algorithm name`);
+        }
+        return data.title;    
+}

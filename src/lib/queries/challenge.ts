@@ -38,7 +38,7 @@ export interface QuizAttempt {
   details: QuizAttemptDetail[];
 }
 
-export const getQuestionBySlug = async (leetcode_slug: string): Promise<LeetCodeQuestion | null> => {
+export const getLeetcodeQuestionBySlug = async (leetcode_slug: string): Promise<LeetCodeQuestion | null> => {
     const { data, error } = await supabase
       .from('challenge_leetcode')
       .select('*')
@@ -53,7 +53,7 @@ export const getQuestionBySlug = async (leetcode_slug: string): Promise<LeetCode
     return data as LeetCodeQuestion | null;
 };
 
-export const getQuizBySlug = async (leetcode_slug: string): Promise<QuizQuestion[] | null> => {
+export const getLeetcodeQuizBySlug = async (leetcode_slug: string): Promise<QuizQuestion[] | null> => {
   const { data, error } = await supabase
     .from('challenge_quizzes')
     .select('quiz_json')
@@ -67,7 +67,7 @@ export const getQuizBySlug = async (leetcode_slug: string): Promise<QuizQuestion
   return data?.quiz_json as QuizQuestion[] | null;
 };
 
-export const getQuestionsFromDB = async (difficulty: Difficulty, tag: string): Promise<LeetCodeQuestion[]> => {
+export const getLeetcodeQuestionsFromDB = async (difficulty: Difficulty, tag: string): Promise<LeetCodeQuestion[]> => {
   // to handle all tag
   let query = supabase
     .from('challenge_leetcode')
@@ -89,7 +89,7 @@ export const getQuestionsFromDB = async (difficulty: Difficulty, tag: string): P
   return (data as LeetCodeQuestion[]) || [];
 };
 
-export const fetchFromApi = async (difficulty: Difficulty, tag: string): Promise<string | null> => {
+export const fetchLeetcodeFromApi = async (difficulty: Difficulty, tag: string): Promise<string | null> => {
   try {
       console.log('Getting Leetcode question...');
 
@@ -107,7 +107,7 @@ export const fetchFromApi = async (difficulty: Difficulty, tag: string): Promise
   }
 };
 
-export const generateQuiz = async (
+export const generateLeetcodeQuiz = async (
   leetcode_slug: string,
   title: string,
   description: string
@@ -127,7 +127,7 @@ export const generateQuiz = async (
   }
 }
 
-export const saveQuizAttempt = async (payload: QuizAttempt): Promise<void> => {
+export const saveLeetcodeQuizAttempt = async (payload: QuizAttempt): Promise<void> => {
   try {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) throw new Error("No authenticated user session found.");

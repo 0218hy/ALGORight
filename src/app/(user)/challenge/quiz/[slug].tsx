@@ -1,4 +1,4 @@
-import { generateQuiz, getQuestionBySlug, getQuizBySlug, MultipleChoiceOption, QuizQuestion, saveQuizAttempt } from '@/src/lib/queries/challenge';
+import { generateLeetcodeQuiz, getLeetcodeQuestionBySlug, getLeetcodeQuizBySlug, MultipleChoiceOption, QuizQuestion, saveLeetcodeQuizAttempt } from '@/src/lib/queries/challenge';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
@@ -27,18 +27,18 @@ export default function QuizScreen() {
             try {
                 setLoading(true);
 
-                let quizData = await getQuizBySlug(slug);
+                let quizData = await getLeetcodeQuizBySlug(slug);
                 if (!quizData) {
                     console.log("No cached quiz found. Getting details about this problem ...");
 
                     // Need to get title and description
-                    const parentProblem = await getQuestionBySlug(slug);
+                    const parentProblem = await getLeetcodeQuestionBySlug(slug);
                     if (!parentProblem) {
                         throw new Error("Problem data not found. Cannot generate quiz.");
                     }
 
                     console.log("Generating quiz...");
-                    quizData = await generateQuiz(
+                    quizData = await generateLeetcodeQuiz(
                         parentProblem.leetcode_slug,
                         parentProblem.title,
                         parentProblem.description
@@ -101,7 +101,7 @@ export default function QuizScreen() {
                 };
             });
 
-            await saveQuizAttempt({
+            await saveLeetcodeQuizAttempt({
                 leetcode_slug: slug,
                 score: finalScore,
                 details: detailRecords
