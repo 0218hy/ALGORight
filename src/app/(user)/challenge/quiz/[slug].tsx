@@ -1,4 +1,4 @@
-import { generateQuiz, getQuestionBySlug, getQuizBySlug, MultipleChoiceOption, QuizQuestion } from '@/src/lib/queries/challenge';
+import { generateQuiz, getQuestionBySlug, getQuizBySlug, MultipleChoiceOption, QuizQuestion, saveQuizAttempt } from '@/src/lib/queries/challenge';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
@@ -9,8 +9,7 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    useWindowDimensions,
-    View,
+    View
 } from 'react-native';
 
 export default function QuizScreen() {
@@ -22,7 +21,6 @@ export default function QuizScreen() {
     const [submittedQuestions, setSubmittedQuestions] = useState<{ [key: number]: boolean }>({});
 
     useEffect(() => {
-        // get quiz if alr in db else generate new 
         const fetchOrGenerateQuiz = async () => {
             if (!slug) return;
 
@@ -74,13 +72,43 @@ export default function QuizScreen() {
         }));
     };
 
-    const handleSubmitAnswer = (questionIndex: number) => {
-        if (!selectedOptions[questionIndex]) return;
+    const handleSubmitAnswer = async (questionIndex: number) => {
+        if (!selectedOptions[questionIndex] || !slug) return;
 
-        setSubmittedQuestions((prev) => ({
-            ...prev,
+        const updatedSubmissions = {
+            ...submittedQuestions,
             [questionIndex]: true,
-        }));
+        }
+        setSubmittedQuestions(updatedSubmissions);
+
+        // save if it is last question
+        if (Object.keys(updatedSubmissions).length === questions.length) {
+            let finalScore = 0;
+
+            const detailRecords = questions.map((quiz, idx) => {
+                const userChoice = selectedOptions[idx]!; // non-null assertion
+                const correctChoice = quiz.correct_option_id;
+                const isCorrect = userChoice === correctChoice;
+
+                if (isCorrect) finalScore += 1;
+
+                return {
+                    question_number: idx + 1,
+                    question_type: quiz.type,
+                    user_answer: userChoice,
+                    correct_answer: correctChoice,
+                    is_correct: isCorrect
+                };
+            });
+
+            await saveQuizAttempt({
+                leetcode_slug: slug,
+                score: finalScore,
+                details: detailRecords
+            });
+
+            Alert.alert("Quiz Completed!", `Review your performance checkpoint. Score: ${finalScore}/${questions.length}`);
+        }
     };
 
     const handleReset = () => {
