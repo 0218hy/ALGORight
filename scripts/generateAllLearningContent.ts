@@ -1,4 +1,3 @@
-// scripts/generateAllLearningContent.ts
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = 'https://zsyxgvjoulzckhopyoqm.supabase.co' 
