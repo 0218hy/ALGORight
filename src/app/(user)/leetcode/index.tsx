@@ -1,6 +1,7 @@
 
 import Colors from '@/src/constants/Colors';
-import { fetchLeetcodeFromApi, getLeetcodeQuestionsFromDB, LeetCodeQuestion } from '@/src/lib/queries/challenge';
+import { fetchLeetcodeFromApi, getLeetcodeQuestionsFromDB } from '@/src/lib/queries/leetcode';
+import { Difficulty, LeetcodeTopicTag, LeetcodeFilterFormData, LeetcodeQuestion } from '@/src/types/leetcode';
 import { Href, useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import React, { useState, useCallback } from 'react';
@@ -14,24 +15,16 @@ import {
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-type Difficulty = 'Easy' | 'Medium' | 'Hard';
-type TopicTag = 'All' | 'Sorting';
-
-interface FilterFormData {
-  difficulty: Difficulty;
-  topicTagSlug: TopicTag;
-}
-
-const DEFAULT_FILTERS: FilterFormData = {
+const DEFAULT_FILTERS: LeetcodeFilterFormData = {
   difficulty: 'Easy',
   topicTagSlug: 'Sorting',
 };
 
-export default function ChallengeScreen() {
+export default function LeetcodeScreen() {
   const router = useRouter();
-  const [formData, setFormData] = useState<FilterFormData>(DEFAULT_FILTERS);
+  const [formData, setFormData] = useState<LeetcodeFilterFormData>(DEFAULT_FILTERS);
   const [loading, setLoading] = useState<boolean>(false);
-  const [questionsList, setQuestionsList] = useState<LeetCodeQuestion[]>([]);
+  const [questionsList, setQuestionsList] = useState<LeetcodeQuestion[]>([]);
 
   // Difficulty
   const [openDifficulty, setOpenDifficulty] = useState(false);
@@ -40,6 +33,7 @@ export default function ChallengeScreen() {
     { label: 'Medium', value: 'Medium' },
     { label: 'Hard', value: 'Hard' }
   ]);
+
   const setDifficultyValue = (callback: any) => {
     setFormData((prev) => ({
       ...prev,
@@ -53,6 +47,7 @@ export default function ChallengeScreen() {
     { label: 'All Tags', value: 'All' },
     { label: 'Sorting', value: 'Sorting' }
   ]);
+
   const setTopicValue = (callback: any) => {
     setFormData((prev) => ({
       ...prev,
@@ -60,13 +55,8 @@ export default function ChallengeScreen() {
     }));
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      handleFilterSubmit();
-    }, [formData.difficulty, formData.topicTagSlug])
-  );
-
-  const handleFilterSubmit = async () => {
+  //  Memoize db query layer to stop infinite rendering triggers
+  const handleFilterSubmit = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getLeetcodeQuestionsFromDB(formData.difficulty, formData.topicTagSlug);
@@ -76,7 +66,13 @@ export default function ChallengeScreen() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [formData.difficulty, formData.topicTagSlug]);
+
+  useFocusEffect(
+    useCallback(() => {
+      handleFilterSubmit();
+    }, [handleFilterSubmit])
+  );
 
   const handleGenerateNew = async () => {
     try {
@@ -84,7 +80,7 @@ export default function ChallengeScreen() {
       const newSlug = await fetchLeetcodeFromApi(formData.difficulty, formData.topicTagSlug);
 
       if (newSlug) {
-        const routePath = `/challenge/${newSlug}` as Href;
+        const routePath = `/leetcode/${newSlug}` as Href;
         router.push(routePath);
       } else {
         Alert.alert("Not Found", "No questions match this criteria on LeetCode.");
@@ -97,7 +93,7 @@ export default function ChallengeScreen() {
   };
 
   const handleSelectQuestion = (slug: string) => {
-    const routePath = `/challenge/${slug}` as Href;
+    const routePath = `/leetcode/${slug}` as Href;
     router.push(routePath);
   }
 

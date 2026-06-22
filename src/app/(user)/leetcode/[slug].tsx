@@ -1,7 +1,7 @@
 import Colors from '@/src/constants/Colors';
-import { getLeetcodeQuestionBySlug, LeetCodeQuestion } from '@/src/lib/queries/challenge';
+import { useLeetcodeQuestions } from '@/src/hooks/useLeetcode';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -14,33 +14,14 @@ import {
 } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 
-export default function ProblemDetailScreen() {
+export default function LeetcodeProblemDetailScreen() {
     const { slug } = useLocalSearchParams<{ slug: string }>();
     const router = useRouter();
     const { width } = useWindowDimensions();
 
-    const [question, setQuestion] = useState<LeetCodeQuestion | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+    const { question, loading } = useLeetcodeQuestions(slug);
+
     const [expandedHintIndex, setExpandedHintIndex] = useState<number | null>(null);
-
-    useEffect(() => {
-        const loadProblemData = async () => {
-            if (!slug) return;
-            try {
-                setLoading(true);
-                const data = await getLeetcodeQuestionBySlug(slug);
-                setQuestion(data);
-            } catch (error) {
-                console.error(error);
-                Alert.alert("Error", "Could not populate problem details.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadProblemData();
-    }, [slug]);
-
     const toggleHint = (index: number) => {
         setExpandedHintIndex(expandedHintIndex === index ? null : index);
     };
@@ -72,7 +53,7 @@ export default function ProblemDetailScreen() {
             {/* Back Navigation */}
             <TouchableOpacity
                 style={styles.backNavigationButton}
-                onPress={() => router.push('/challenge')}
+                onPress={() => router.push('/leetcode')}
                 activeOpacity={0.7}
             >
                 <Text style={styles.backNavigationText}>← Back</Text>
@@ -145,7 +126,7 @@ export default function ProblemDetailScreen() {
             <TouchableOpacity
                 style={styles.quizLaunchButton}
                 activeOpacity={0.8}
-                onPress={() => router.push(`/challenge/quiz/${question.leetcode_slug}`)}
+                onPress={() => router.push(`/leetcode/quiz/${question.leetcode_slug}`)}
             >
                 <Text style={styles.quizLaunchButtonText}>💡 Test Your Concept Strategy →</Text>
             </TouchableOpacity>

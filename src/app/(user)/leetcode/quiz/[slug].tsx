@@ -1,6 +1,8 @@
-import { generateLeetcodeQuiz, getLeetcodeQuestionBySlug, getLeetcodeQuizBySlug, MultipleChoiceOption, QuizQuestion, saveLeetcodeQuizAttempt } from '@/src/lib/queries/challenge';
+import { useLeetcodeQuiz } from '@/src/hooks/useLeetcode';
+import { saveLeetcodeQuizAttempt } from '@/src/lib/queries/leetcode';
+import { LeetcodeMultipleChoiceOption } from '@/src/types/leetcode';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -12,56 +14,13 @@ import {
     View
 } from 'react-native';
 
-export default function QuizScreen() {
+export default function LeetcodeQuizScreen() {
     const { slug } = useLocalSearchParams<{ slug: string }>();
 
-    const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const { questions, loading } = useLeetcodeQuiz(slug);
+
     const [selectedOptions, setSelectedOptions] = useState<{ [key: number]: 'A' | 'B' | 'C' | null }>({});
     const [submittedQuestions, setSubmittedQuestions] = useState<{ [key: number]: boolean }>({});
-
-    useEffect(() => {
-        const fetchOrGenerateQuiz = async () => {
-            if (!slug) return;
-
-            try {
-                setLoading(true);
-
-                let quizData = await getLeetcodeQuizBySlug(slug);
-                if (!quizData) {
-                    console.log("No cached quiz found. Getting details about this problem ...");
-
-                    // Need to get title and description
-                    const parentProblem = await getLeetcodeQuestionBySlug(slug);
-                    if (!parentProblem) {
-                        throw new Error("Problem data not found. Cannot generate quiz.");
-                    }
-
-                    console.log("Generating quiz...");
-                    quizData = await generateLeetcodeQuiz(
-                        parentProblem.leetcode_slug,
-                        parentProblem.title,
-                        parentProblem.description
-                    );
-                }
-
-                if (quizData && quizData.length > 0) {
-                    setQuestions(quizData);
-                } else {
-                    throw new Error("Failed to retrieve valid quiz structure.");
-                }
-
-            } catch (err) {
-                console.error(err);
-                Alert.alert("Quiz Unavailable", "Could not load or generate the conceptual quiz for this challenge.");
-                router.push("/(user)/challenge")
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchOrGenerateQuiz();
-    }, [slug]);
 
     const handleSelectOption = (questionIndex: number, optionId: 'A' | 'B' | 'C') => {
         if (submittedQuestions[questionIndex]) return;
@@ -147,7 +106,7 @@ export default function QuizScreen() {
             {/* Back Navigation */}
             <TouchableOpacity
                 style={styles.backNavigationButton}
-                onPress={() => router.push(`/challenge/${slug}`)}
+                onPress={() => router.push(`/leetcode/${slug}`)}
                 activeOpacity={0.7}
             >
                 <Text style={styles.backNavigationText}>← Back</Text>
@@ -175,7 +134,7 @@ export default function QuizScreen() {
 
                         {/* Multiple Choice Options List */}
                         <View style={styles.optionsContainer}>
-                            {quiz.options.map((option: MultipleChoiceOption) => {
+                            {quiz.options.map((option: LeetcodeMultipleChoiceOption) => {
                                 const isSelected = selectedOption === option.id;
 
                                 // Production UI Color Modifiers

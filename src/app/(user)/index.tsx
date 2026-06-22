@@ -2,7 +2,7 @@ import { Text, View } from '@/src/components/Themed';
 import Colors from '@/src/constants/Colors';
 import { useAuthContext } from '@/src/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet } from 'react-native';
 
 export default function HomePage() {
@@ -56,7 +56,7 @@ export default function HomePage() {
 
         <Pressable
           style={({ pressed }) => [styles.navCard, pressed && styles.cardPressed]}
-          onPress={() => router.push('/challenge')}>
+          onPress={() => router.push('/leetcode' as Href)}>
           <Text style={styles.navCardText}> Challenges </Text>
         </Pressable>
 
