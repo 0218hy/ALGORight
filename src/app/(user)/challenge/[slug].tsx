@@ -1,5 +1,5 @@
 import Colors from '@/src/constants/Colors';
-import { getQuestionBySlug, LeetCodeQuestion } from '@/src/lib/queries/challenge';
+import { getLeetcodeQuestionBySlug, LeetCodeQuestion } from '@/src/lib/queries/challenge';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
@@ -28,7 +28,7 @@ export default function ProblemDetailScreen() {
             if (!slug) return;
             try {
                 setLoading(true);
-                const data = await getQuestionBySlug(slug);
+                const data = await getLeetcodeQuestionBySlug(slug);
                 setQuestion(data);
             } catch (error) {
                 console.error(error);
@@ -66,8 +66,7 @@ export default function ProblemDetailScreen() {
     }
 
     const hints: string[] = question.metadata_json?.hints || [];
-    const testcases: string = question.metadata_json?.exampleTestcases || "";
-
+   
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
             {/* Back Navigation */}
@@ -127,6 +126,7 @@ export default function ProblemDetailScreen() {
                         code: { fontFamily: 'monospace', backgroundColor: '#f6f8fa', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4, color: '#cf222e' },
                         strong: { fontWeight: '700', color: Colors.potato.darker },
                         li: { color: Colors.potato.text, fontSize: 15, lineHeight: 24, marginBottom: 4 },
+                        font: { fontSize: 15, lineHeight: 24 },
                         pre: {
                             backgroundColor: '#f3eae0',
                             paddingVertical: 2,
@@ -135,7 +135,6 @@ export default function ProblemDetailScreen() {
                             borderWidth: 1,
                             borderColor: '#e4d5c3',
                             marginVertical: 5,
-                            // Ensures the raw line breaks inside your database string are strictly followed
                             whiteSpace: 'pre',
                             fontFamily: 'monospace',
                         }

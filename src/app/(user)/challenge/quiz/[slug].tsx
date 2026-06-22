@@ -1,4 +1,4 @@
-import { generateQuiz, getQuestionBySlug, getQuizBySlug, MultipleChoiceOption, QuizQuestion } from '@/src/lib/queries/challenge';
+import { generateLeetcodeQuiz, getLeetcodeQuestionBySlug, getLeetcodeQuizBySlug, MultipleChoiceOption, QuizQuestion, saveLeetcodeQuizAttempt } from '@/src/lib/queries/challenge';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
@@ -9,13 +9,11 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    useWindowDimensions,
-    View,
+    View
 } from 'react-native';
 
 export default function QuizScreen() {
     const { slug } = useLocalSearchParams<{ slug: string }>();
-    const { width } = useWindowDimensions();
 
     const [questions, setQuestions] = useState<QuizQuestion[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -29,46 +27,26 @@ export default function QuizScreen() {
             try {
                 setLoading(true);
 
-                let quizData = await getQuizBySlug(slug);
+                let quizData = await getLeetcodeQuizBySlug(slug);
                 if (!quizData) {
                     console.log("No cached quiz found. Getting details about this problem ...");
 
                     // Need to get title and description
-                    const parentProblem = await getQuestionBySlug(slug);
+                    const parentProblem = await getLeetcodeQuestionBySlug(slug);
                     if (!parentProblem) {
                         throw new Error("Problem data not found. Cannot generate quiz.");
                     }
 
                     console.log("Generating quiz...");
-                    quizData = await generateQuiz(
+                    quizData = await generateLeetcodeQuiz(
                         parentProblem.leetcode_slug,
                         parentProblem.title,
                         parentProblem.description
                     );
                 }
 
-                let finalQuizData: QuizQuestion[] = [];
-                if (quizData) {
-                    // Scenario A: It came from the DB cache and is wrapped in an object { quiz_json: [...] }
-                    if (!Array.isArray(quizData) && (quizData as any).quiz_json) {
-                        finalQuizData = (quizData as any).quiz_json;
-                    }
-                    // Scenario B: It came straight from the Edge Function array response [...]
-                    else if (Array.isArray(quizData)) {
-                        finalQuizData = quizData;
-                    }
-                    // Scenario C: It came back as a raw JSON string that needs parsing
-                    else if (typeof quizData === 'string') {
-                        try {
-                            finalQuizData = JSON.parse(quizData);
-                        } catch (e) {
-                            console.error("Failed to parse quizData string", e);
-                        }
-                    }
-                }
-
-                if (finalQuizData && finalQuizData.length > 0) {
-                    setQuestions(finalQuizData);
+                if (quizData && quizData.length > 0) {
+                    setQuestions(quizData);
                 } else {
                     throw new Error("Failed to retrieve valid quiz structure.");
                 }
@@ -94,13 +72,43 @@ export default function QuizScreen() {
         }));
     };
 
-    const handleSubmitAnswer = (questionIndex: number) => {
-        if (!selectedOptions[questionIndex]) return;
+    const handleSubmitAnswer = async (questionIndex: number) => {
+        if (!selectedOptions[questionIndex] || !slug) return;
 
-        setSubmittedQuestions((prev) => ({
-            ...prev,
+        const updatedSubmissions = {
+            ...submittedQuestions,
             [questionIndex]: true,
-        }));
+        }
+        setSubmittedQuestions(updatedSubmissions);
+
+        // save if it is last question
+        if (Object.keys(updatedSubmissions).length === questions.length) {
+            let finalScore = 0;
+
+            const detailRecords = questions.map((quiz, idx) => {
+                const userChoice = selectedOptions[idx]!; // non-null assertion
+                const correctChoice = quiz.correct_option_id;
+                const isCorrect = userChoice === correctChoice;
+
+                if (isCorrect) finalScore += 1;
+
+                return {
+                    question_number: idx + 1,
+                    question_type: quiz.type,
+                    user_answer: userChoice,
+                    correct_answer: correctChoice,
+                    is_correct: isCorrect
+                };
+            });
+
+            await saveLeetcodeQuizAttempt({
+                leetcode_slug: slug,
+                score: finalScore,
+                details: detailRecords
+            });
+
+            Alert.alert("Quiz Completed!", `Review your performance checkpoint. Score: ${finalScore}/${questions.length}`);
+        }
     };
 
     const handleReset = () => {

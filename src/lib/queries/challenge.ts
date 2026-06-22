@@ -24,7 +24,21 @@ export interface LeetCodeQuestion {
     metadata_json?: any;
 }
 
-export const getQuestionBySlug = async (leetcode_slug: string): Promise<LeetCodeQuestion | null> => {
+export interface QuizAttemptDetail {
+  question_number: number;
+  question_type: 'approach' | 'runtime' | 'space';
+  user_answer: 'A' | 'B' | 'C';
+  correct_answer: 'A' | 'B' | 'C';
+  is_correct: boolean;
+}
+
+export interface QuizAttempt {
+  leetcode_slug: string;
+  score: number;
+  details: QuizAttemptDetail[];
+}
+
+export const getLeetcodeQuestionBySlug = async (leetcode_slug: string): Promise<LeetCodeQuestion | null> => {
     const { data, error } = await supabase
       .from('challenge_leetcode')
       .select('*')
@@ -39,7 +53,7 @@ export const getQuestionBySlug = async (leetcode_slug: string): Promise<LeetCode
     return data as LeetCodeQuestion | null;
 };
 
-export const getQuizBySlug = async (leetcode_slug: string): Promise<QuizQuestion[] | null> => {
+export const getLeetcodeQuizBySlug = async (leetcode_slug: string): Promise<QuizQuestion[] | null> => {
   const { data, error } = await supabase
     .from('challenge_quizzes')
     .select('quiz_json')
@@ -53,7 +67,7 @@ export const getQuizBySlug = async (leetcode_slug: string): Promise<QuizQuestion
   return data?.quiz_json as QuizQuestion[] | null;
 };
 
-export const getQuestionFromDB = async (difficulty: Difficulty, tag: string): Promise<LeetCodeQuestion | null> => {
+export const getLeetcodeQuestionsFromDB = async (difficulty: Difficulty, tag: string): Promise<LeetCodeQuestion[]> => {
   // to handle all tag
   let query = supabase
     .from('challenge_leetcode')
@@ -65,17 +79,17 @@ export const getQuestionFromDB = async (difficulty: Difficulty, tag: string): Pr
     query = query.contains('tags', [tag.toLowerCase()]);
   }
 
-  const { data, error } = await query.limit(1).maybeSingle();
+  const { data, error } = await query;
 
   if (error) {
     console.error('Database fetch failed:', error);
     throw error;
   }
   
-  return data as LeetCodeQuestion | null;
+  return (data as LeetCodeQuestion[]) || [];
 };
 
-export const fetchFromApi = async (difficulty: Difficulty, tag: string): Promise<string | null> => {
+export const fetchLeetcodeFromApi = async (difficulty: Difficulty, tag: string): Promise<string | null> => {
   try {
       console.log('Getting Leetcode question...');
 
@@ -93,7 +107,7 @@ export const fetchFromApi = async (difficulty: Difficulty, tag: string): Promise
   }
 };
 
-export const generateQuiz = async (
+export const generateLeetcodeQuiz = async (
   leetcode_slug: string,
   title: string,
   description: string
@@ -110,5 +124,41 @@ export const generateQuiz = async (
   } catch (err) {
     console.error("Failed to execute separate quiz function:", err);
     throw err;
+  }
+}
+
+export const saveLeetcodeQuizAttempt = async (payload: QuizAttempt): Promise<void> => {
+  try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) throw new Error("No authenticated user session found.");
+
+    const { data: attemptData, error: attemptError } = await supabase
+      .from('challenge_attempts')
+      .insert({
+        user_id: user.id,
+        leetcode_slug: payload.leetcode_slug,
+        score: payload.score,
+      })
+      .select('id')
+      .single();
+
+    if (attemptError) throw attemptError;
+
+    const detailRows = payload.details.map((detail) => ({
+      attempt_id: attemptData.id,
+      question_number: detail.question_number,
+      question_type: detail.question_type,
+      user_answer: detail.user_answer,
+      correct_answer: detail.correct_answer,
+      is_correct: detail.is_correct,
+    }));
+
+    const { error: detailsError } = await supabase
+      .from('challenge_attempt_details')
+      .insert(detailRows);
+
+    if (detailsError) throw detailsError;
+  } catch (err) {
+    console.error("Failed to save quiz attempt history:", err);
   }
 }

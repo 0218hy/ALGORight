@@ -19,6 +19,12 @@ export default function AlgorithmDetailScreen() {
         description: 'Test your recall',
         onPress: () => router.push(`/flashcards/${id}`),
     },
+    {
+      icon: '📝',
+      title: 'Quiz',
+      description: 'Test your understanding',
+      onPress: () => router.push(`/quiz/${id}`),
+  },
   ]
 
   return (
