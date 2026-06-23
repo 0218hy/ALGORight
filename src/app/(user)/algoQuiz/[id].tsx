@@ -1,56 +1,19 @@
 import Colors from '@/src/constants/Colors'
-import { getAlgorithmNameById } from '@/src/lib/queries/algorithms'
-import { generateAlgoQuiz, getAlgoQuizById, MultipleChoiceOption, QuizQuestion, saveAlgoQuizAttempt } from '@/src/lib/queries/quiz'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { Href, router, Stack, useLocalSearchParams } from 'expo-router'
-import { useEffect, useState } from 'react'
+import { router, Stack, useLocalSearchParams } from 'expo-router'
+import { useState } from 'react'
 import { ActivityIndicator, Alert, Pressable, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { useAlgoQuiz } from '@/src/hooks/useAlgoQuiz'
+import { saveAlgoQuizAttempt } from '@/src/lib/queries/algoQuiz'
+import { AlgoMultipleChoiceOption } from '@/src/types/algoQuiz'
 
 export default function QuizScreen() {
-    const { id } = useLocalSearchParams<{ id: string }>()
+    const { id } = useLocalSearchParams<{ id: string }>();
 
-    const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [algoTitle, setAlgoTitle] = useState<string>("");
+    const { questions, loading, algoTitle } = useAlgoQuiz(id);
+
     const [selectedOptions, setSelectedOptions] = useState<{ [key: number]: 'A' | 'B' | 'C' | 'D' | null }>({});
     const [submittedQuestions, setSubmittedQuestions] = useState<{ [key: number]: boolean }>({});
-
-    useEffect(() => {
-        const fetchOrGenerateQuiz = async () => {
-            if (!id) return;
-
-            try {
-                setLoading(true);
-
-                let quizData = await getAlgoQuizById(id);
-                let algoName = await getAlgorithmNameById(id);
-                setAlgoTitle(algoName);
-                
-                if (!quizData) {
-                    console.log("No cached quiz found. Generating quiz about this algorithm ...");
-
-                    quizData = await generateAlgoQuiz(
-                        id, algoName
-                    );
-                }
-
-                if (quizData && quizData.length > 0) {
-                    setQuestions(quizData);
-                } else {
-                    throw new Error("Failed to retrieve valid quiz structure.");
-                }
-
-            } catch (err) {
-                console.error(err);
-                Alert.alert("Quiz Unavailable", "Could not load or generate the conceptual quiz for this challenge.");
-                router.push(`/(user)/algorithm` as Href);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchOrGenerateQuiz();
-    }, [id]);
 
     const handleSelectOption = (questionIndex: number, optionId: 'A' | 'B' | 'C' | 'D') => {
         if (submittedQuestions[questionIndex]) return;
@@ -169,7 +132,7 @@ export default function QuizScreen() {
                             <Text style={styles.questionText}>{quiz.question_text}</Text>
 
                             <View style={styles.optionsContainer}>
-                                {quiz.options.map((option: MultipleChoiceOption) => {
+                                {quiz.options.map((option: AlgoMultipleChoiceOption) => {
                                     const isSelected = selectedOption === option.id;
 
                                     let optionStyle = [styles.optionRow];

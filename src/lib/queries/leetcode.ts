@@ -1,44 +1,12 @@
 import { supabase } from '../supabase';
-export type Difficulty = 'Easy' | 'Medium' | 'Hard';
+import { 
+    Difficulty, 
+    LeetcodeQuestion, 
+    LeetcodeQuizQuestion, 
+    LeetcodeQuizAttempt 
+  } from '@/src/types/leetcode';
 
-export interface MultipleChoiceOption {
-  id: 'A' | 'B' | 'C';
-  text: string;
-}
-
-export interface QuizQuestion {
-  type: 'approach' | 'runtime' | 'space';
-  question_text: string;
-  options: MultipleChoiceOption[];
-  correct_option_id: 'A' | 'B' | 'C';
-  explanation: string;
-}
-
-export interface LeetCodeQuestion {
-    id: string;
-    leetcode_slug: string;
-    difficulty: Difficulty;
-    tags: string[];
-    title: string;
-    description: string;
-    metadata_json?: any;
-}
-
-export interface QuizAttemptDetail {
-  question_number: number;
-  question_type: 'approach' | 'runtime' | 'space';
-  user_answer: 'A' | 'B' | 'C';
-  correct_answer: 'A' | 'B' | 'C';
-  is_correct: boolean;
-}
-
-export interface QuizAttempt {
-  leetcode_slug: string;
-  score: number;
-  details: QuizAttemptDetail[];
-}
-
-export const getLeetcodeQuestionBySlug = async (leetcode_slug: string): Promise<LeetCodeQuestion | null> => {
+export const getLeetcodeQuestionBySlug = async (leetcode_slug: string): Promise<LeetcodeQuestion | null> => {
     const { data, error } = await supabase
       .from('challenge_leetcode')
       .select('*')
@@ -50,10 +18,10 @@ export const getLeetcodeQuestionBySlug = async (leetcode_slug: string): Promise<
       throw error;
     }
 
-    return data as LeetCodeQuestion | null;
+    return data as LeetcodeQuestion | null;
 };
 
-export const getLeetcodeQuizBySlug = async (leetcode_slug: string): Promise<QuizQuestion[] | null> => {
+export const getLeetcodeQuizBySlug = async (leetcode_slug: string): Promise<LeetcodeQuizQuestion[] | null> => {
   const { data, error } = await supabase
     .from('challenge_quizzes')
     .select('quiz_json')
@@ -64,10 +32,10 @@ export const getLeetcodeQuizBySlug = async (leetcode_slug: string): Promise<Quiz
     console.error("Failed to get quizzes:", error);
     return null;
   }
-  return data?.quiz_json as QuizQuestion[] | null;
+  return data?.quiz_json as LeetcodeQuizQuestion[] | null;
 };
 
-export const getLeetcodeQuestionsFromDB = async (difficulty: Difficulty, tag: string): Promise<LeetCodeQuestion[]> => {
+export const getLeetcodeQuestionsFromDB = async (difficulty: Difficulty, tag: string): Promise<LeetcodeQuestion[]> => {
   // to handle all tag
   let query = supabase
     .from('challenge_leetcode')
@@ -86,7 +54,7 @@ export const getLeetcodeQuestionsFromDB = async (difficulty: Difficulty, tag: st
     throw error;
   }
   
-  return (data as LeetCodeQuestion[]) || [];
+  return (data as LeetcodeQuestion[]) || [];
 };
 
 export const fetchLeetcodeFromApi = async (difficulty: Difficulty, tag: string): Promise<string | null> => {
@@ -111,7 +79,7 @@ export const generateLeetcodeQuiz = async (
   leetcode_slug: string,
   title: string,
   description: string
-): Promise<QuizQuestion[] | null> => {
+): Promise<LeetcodeQuizQuestion[] | null> => {
   try{
     console.log(`Generating quiz for ${leetcode_slug}`);
 
@@ -127,7 +95,7 @@ export const generateLeetcodeQuiz = async (
   }
 }
 
-export const saveLeetcodeQuizAttempt = async (payload: QuizAttempt): Promise<void> => {
+export const saveLeetcodeQuizAttempt = async (payload: LeetcodeQuizAttempt): Promise<void> => {
   try {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) throw new Error("No authenticated user session found.");
