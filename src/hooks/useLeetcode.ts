@@ -71,7 +71,7 @@ export function useLeetcodeQuiz(slug: string | undefined) {
                 } catch (err) {
                     console.error(err);
                     Alert.alert("Quiz Unavailable", "Could not load or generate the conceptual quiz for this challenge.");
-                    router.push("/(user)/challenge")
+                    router.push("/(user)/leetcode")
                 } finally {
                     setLoading(false);
                 }
@@ -79,6 +79,6 @@ export function useLeetcodeQuiz(slug: string | undefined) {
     
             fetchOrGenerateQuiz();
         }, [slug]);
-        
+
     return { questions, loading };
 }

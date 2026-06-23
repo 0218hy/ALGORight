@@ -1,33 +1,8 @@
+import { AlgoQuizAttempt, AlgoQuizQuestion } from "@/src/types/algoQuiz";
 import { supabase } from "../supabase";
 
-export interface MultipleChoiceOption {
-  id: 'A' | 'B' | 'C' | 'D';
-  text: string;
-}
 
-export interface QuizQuestion {
-  type: 'mechanics' | 'runtime' | 'space' | 'stability' | 'edge_case';
-  question_text: string;
-  options: MultipleChoiceOption[];
-  correct_option_id: 'A' | 'B' | 'C' | 'D';
-  explanation: string;
-}
-
-export interface QuizAttemptDetail {
-    question_number: number;
-    question_type: 'mechanics' | 'runtime' | 'space' | 'stability' | 'edge_case';
-    user_answer: 'A' | 'B' | 'C' | 'D';
-    correct_answer: 'A' | 'B' | 'C' | 'D';
-    is_correct: boolean;
-}
-  
-export interface QuizAttempt {
-    algorithm_id: string;
-    score: number;
-    details: QuizAttemptDetail[];
-}
-
-export const getAlgoQuizById = async (algorithm_id: string): Promise<QuizQuestion[] | null> => {
+export const getAlgoQuizById = async (algorithm_id: string): Promise<AlgoQuizQuestion[] | null> => {
   const { data, error } = await supabase
     .from('algorithm_quizzes')
     .select('quiz_json')
@@ -38,13 +13,13 @@ export const getAlgoQuizById = async (algorithm_id: string): Promise<QuizQuestio
     console.error("Failed to get quizzes:", error);
     return null;
   }
-  return data?.quiz_json as QuizQuestion[] | null;
+  return data?.quiz_json as AlgoQuizQuestion[] | null;
 };
 
 export const generateAlgoQuiz = async (
   algorithm_id: string,
   algorithm_name: string
-): Promise<QuizQuestion[] | null> => {
+): Promise<AlgoQuizQuestion[] | null> => {
   try{
     console.log(`Generating quiz for ${algorithm_name}`);
 
@@ -60,7 +35,7 @@ export const generateAlgoQuiz = async (
   }
 }
 
-export const saveAlgoQuizAttempt = async (payload: QuizAttempt): Promise<void> => {
+export const saveAlgoQuizAttempt = async (payload: AlgoQuizAttempt): Promise<void> => {
   try {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) throw new Error("No authenticated user session found.");

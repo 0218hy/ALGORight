@@ -126,7 +126,7 @@ export default function LeetcodeProblemDetailScreen() {
             <TouchableOpacity
                 style={styles.quizLaunchButton}
                 activeOpacity={0.8}
-                onPress={() => router.push(`/leetcode/quiz/${question.leetcode_slug}`)}
+                onPress={() => router.push(`/leetcode/leetcodeQuiz/${question.leetcode_slug}`)}
             >
                 <Text style={styles.quizLaunchButtonText}>💡 Test Your Concept Strategy →</Text>
             </TouchableOpacity>

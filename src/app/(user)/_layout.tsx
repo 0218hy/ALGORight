@@ -59,7 +59,8 @@ export default function TabLayout() {
       <Tabs.Screen name="flashcards/[id]" options={{ href: null }} />
       <Tabs.Screen name="leetcode/index" options={{ href: null }} />
       <Tabs.Screen name="leetcode/[slug]" options={{ href: null }} />
-      <Tabs.Screen name="leetcode/quiz/[slug]" options={{ href: null }} />
+      <Tabs.Screen name="leetcode/leetcodeQuiz/[slug]" options={{ href: null }} />
+      <Tabs.Screen name="algoQuiz/[id]" options={{ href: null }} />
     </Tabs>
   );
 }
