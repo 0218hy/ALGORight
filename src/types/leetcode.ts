@@ -44,6 +44,7 @@ export interface LeetcodeQuizAttemptDetail {
 export interface LeetcodeQuizAttempt {
   leetcode_slug: string;
   score: number;
+  difficulty: Difficulty
   details: LeetcodeQuizAttemptDetail[];
 }
 

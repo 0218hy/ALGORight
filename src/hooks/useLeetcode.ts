@@ -3,7 +3,7 @@ import {
     getLeetcodeQuestionBySlug,
     getLeetcodeQuizBySlug
 } from '@/src/lib/queries/leetcode';
-import { LeetcodeQuestion, LeetcodeQuizQuestion } from '@/src/types/leetcode';
+import { Difficulty, LeetcodeQuestion, LeetcodeQuizQuestion } from '@/src/types/leetcode';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
@@ -35,6 +35,7 @@ export function useLeetcodeQuestions(slug: string | undefined) {
 
 export function useLeetcodeQuiz(slug: string | undefined) {
     const [questions, setQuestions] = useState<LeetcodeQuizQuestion[]>([]);
+    const [difficulty, setDifficulty] = useState<Difficulty | null>(null)
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -44,12 +45,17 @@ export function useLeetcodeQuiz(slug: string | undefined) {
                 try {
                     setLoading(true);
     
+                    // always fetch quiz cache 
                     let quizData = await getLeetcodeQuizBySlug(slug);
+                    
+                    // always fetch problem (for difficulty regardless of cache + potential quiz generation)
+                    const parentProblem = await getLeetcodeQuestionBySlug(slug)
+                    if (parentProblem) setDifficulty(parentProblem.difficulty)
+
+                    // only generate quiz if not cached 
                     if (!quizData) {
                         console.log("No cached quiz found. Getting details about this problem ...");
     
-                        // Need to get title and description
-                        const parentProblem = await getLeetcodeQuestionBySlug(slug);
                         if (!parentProblem) {
                             throw new Error("Problem data not found. Cannot generate quiz.");
                         }
@@ -80,5 +86,5 @@ export function useLeetcodeQuiz(slug: string | undefined) {
             fetchOrGenerateQuiz();
         }, [slug]);
 
-    return { questions, loading };
+    return { questions, difficulty, loading };
 }

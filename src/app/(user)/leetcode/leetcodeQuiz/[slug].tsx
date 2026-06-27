@@ -17,7 +17,7 @@ import {
 export default function LeetcodeQuizScreen() {
     const { slug } = useLocalSearchParams<{ slug: string }>();
 
-    const { questions, loading } = useLeetcodeQuiz(slug);
+    const { questions, difficulty, loading } = useLeetcodeQuiz(slug);
 
     const [selectedOptions, setSelectedOptions] = useState<{ [key: number]: 'A' | 'B' | 'C' | null }>({});
     const [submittedQuestions, setSubmittedQuestions] = useState<{ [key: number]: boolean }>({});
@@ -60,9 +60,15 @@ export default function LeetcodeQuizScreen() {
                 };
             });
 
+            if (!difficulty) {
+                Alert.alert("Error", "Could not determine difficulty. Please try again.")
+                return
+            }
+
             await saveLeetcodeQuizAttempt({
                 leetcode_slug: slug,
                 score: finalScore,
+                difficulty: difficulty, 
                 details: detailRecords
             });
 

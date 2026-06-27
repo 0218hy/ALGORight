@@ -1,7 +1,8 @@
 import { Session, User } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
 import { fetchUserProfile } from '../lib/queries/auth'
+import { updateStreak } from '../lib/queries/xp'
+import { supabase } from '../lib/supabase'
 
 export interface UserProfile {
     username: string
@@ -39,6 +40,13 @@ export const useAuth = (): AuthState => {
             setUser(session?.user ?? null)
             if (session?.user) {
                 await loadProfileData(session.user.id)
+                // update streak on app open 
+                try {
+                    const { streak, bonusXP } = await updateStreak()
+                    console.log(`Streak: ${streak} days, bonus XP: ${bonusXP}`)
+                } catch (err) {
+                    console.error('Streak update failed:', err)
+                }
             }
             setLoading(false)
         })
@@ -50,6 +58,13 @@ export const useAuth = (): AuthState => {
                 setUser(session?.user ?? null)
                 if(session?.user){
                     await loadProfileData(session.user.id)
+                    // update streak on auth state change 
+                    try {
+                        const { streak, bonusXP } = await updateStreak()
+                        console.log(`Streak: ${streak} days, bonus XP: ${bonusXP}`)
+                    } catch (err) {
+                        console.error('Streak update failed:', err)
+                    }
                 } 
                 setLoading(false)
             }
