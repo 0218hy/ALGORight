@@ -30,7 +30,7 @@ export default function ProfileScreen() {
       })
       const uri = avatar.toString() // raw SVG string 
       console.log('Avatar URI:', uri?.substring(0, 100))
-      setAvatarUri(uri)
+      setAvatarUri(uri) 
     }
     generateAvatar()
   }, [username])
@@ -65,7 +65,7 @@ export default function ProfileScreen() {
         <View style={styles.headerInfo}>
           <Text style={styles.username}>{username}</Text>
           <View style={styles.streakRow}>
-            <Text style={styles.streakEmoji}><FontAwesome name="bolt" size={20} color="#E85D5D" /></Text>
+            <FontAwesome name="bolt" size={20} color="#E85D5D" />
             <Text style={styles.streakText}>
               {streakCount} day{streakCount !== 1 ? 's' : ''} streak
             </Text>
@@ -127,10 +127,19 @@ export default function ProfileScreen() {
 
       {/* Algorithm List */}
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Your Algorithms</Text>
+        <View style={styles.sectionTitleRow}>
+          <FontAwesome
+            name="th-large"
+            size={16}
+            color={Colors.potato.text}
+          />
+          <Text style={styles.sectionTitle}>
+            Your Algorithms
+          </Text>
+        </View>
+
         {algorithms.map((algo) => (
           <View key={algo.id} style={styles.algoRow}>
-            <Text style={styles.algoIcon}>
               {algo.is_unlocked ? (
               <FontAwesome
                 name="unlock"
@@ -144,7 +153,6 @@ export default function ProfileScreen() {
                   color={Colors.potato.border}
                 />
               )}
-            </Text>
             <View style={styles.algoInfo}>
               <Text
                 style={[
@@ -174,12 +182,21 @@ export default function ProfileScreen() {
 
       {/* Recommendations */}
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Recommended Next</Text>
+        <View style={styles.sectionTitleRow}>
+          <FontAwesome
+            name="magic"
+            size={16}
+            color={Colors.potato.text}
+          />
+          <Text style={styles.sectionTitle}>
+            Recommended Next
+          </Text>
+        </View>
         {algorithms
           .filter((algo) => algo.is_unlocked)
           .map((algo) => (
             <View key={algo.id} style={styles.recommendRow}>
-              <Text style={styles.recommendIcon}> <FontAwesome name="clone" size={16} color={Colors.potato.tint}/></Text>
+              <FontAwesome name="clone" size={16} color={Colors.potato.tint}/>
               <View>
                 <Text style={styles.recommendTitle}>
                   Review {algo.title} flashcards
@@ -192,7 +209,7 @@ export default function ProfileScreen() {
           ))}
         {nextLocked && (
           <View style={styles.recommendRow}>
-            <Text style={styles.recommendIcon}><FontAwesome name="trophy" size={16} color={Colors.potato.tint} /></Text>
+            <FontAwesome name="trophy" size={16} color={Colors.potato.tint} />
             <View>
               <Text style={styles.recommendTitle}>
                 Complete a challenge to earn XP
@@ -253,7 +270,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   username: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     color: Colors.potato.darker,
   },
@@ -262,16 +279,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
   },
-  streakEmoji: {
-    fontSize: 14,
-  },
   streakText: {
-    fontSize: 13,
+    fontSize: 14,
     color: Colors.potato.text,
     fontWeight: '600',
   },
   xpTotal: {
-    fontSize: 12,
+    fontSize: 14,
     color: Colors.potato.tint,
     fontWeight: '600',
   },
@@ -284,18 +298,18 @@ const styles = StyleSheet.create({
 
   //Level + Unlock 
   rowCard: {
-  flexDirection: 'row',
-  backgroundColor: '#ffffff',
-  borderRadius: 16,
-  padding: 16,
-  marginBottom: 15,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.06,
-  shadowRadius: 4,
-  elevation: 2,
-  alignItems: 'center',
-  gap: 12,
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
+    alignItems: 'center',
+    gap: 12,
   },
   leftHalf: {
     alignItems: 'center',
@@ -310,7 +324,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#ffffff',
     borderRadius: 16,
-    padding: 16,
+    padding: 24,
     marginBottom: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -318,17 +332,22 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  sectionTitle: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: Colors.potato.darker,
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.potato.text,
   },
   // XP progress
   xpProgressText: {
-        textAlign: 'center',
-        fontSize: 13,
-        color: Colors.potato.text,
+    textAlign: 'center',
+    fontSize: 13,
+    color: Colors.potato.text,
   },
   // Unlock progress bar
   unlockAlgoName: {
@@ -358,20 +377,17 @@ const styles = StyleSheet.create({
   algoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: Colors.potato.border,
     gap: 10,
-  },
-  algoIcon: {
-    fontSize: 18,
   },
   algoInfo: {
     flex: 1,
   },
   algoTitle: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '800',
     color: Colors.potato.darker,
   },
   algoLocked: {
@@ -401,17 +417,14 @@ const styles = StyleSheet.create({
   // Recommendations
   recommendRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 10,
-    paddingVertical: 8,
+    alignItems: 'center',
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: Colors.potato.border,
-  },
-  recommendIcon: {
-    fontSize: 18,
+    gap: 10,
   },
   recommendTitle: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '600',
     color: Colors.potato.darker,
   },
