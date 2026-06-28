@@ -1,10 +1,10 @@
+import { ScreenWrapper } from '@/src/components/ScreenWrapper';
 import Colors from '@/src/constants/Colors';
 import { useLeetcodeQuestions } from '@/src/hooks/useLeetcode';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
     ActivityIndicator,
-    Alert,
     ScrollView,
     StyleSheet,
     Text,
@@ -49,15 +49,8 @@ export default function LeetcodeProblemDetailScreen() {
     const hints: string[] = question.metadata_json?.hints || [];
    
     return (
+        <ScreenWrapper showBack pillLabel={question.title} pillIcon="code">
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-            {/* Back Navigation */}
-            <TouchableOpacity
-                style={styles.backNavigationButton}
-                onPress={() => router.push('/leetcode')}
-                activeOpacity={0.7}
-            >
-                <Text style={styles.backNavigationText}>← Back</Text>
-            </TouchableOpacity>
 
             {/* Header Card */}
             <View style={styles.headerCard}>
@@ -163,6 +156,7 @@ export default function LeetcodeProblemDetailScreen() {
             )}
 
         </ScrollView>
+        </ScreenWrapper>
     );
 }
 

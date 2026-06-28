@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import { savePostToDB } from "@/src/lib/queries/forum";
 import Colors from "@/src/constants/Colors";
 import { CreatePostPayload } from "@/src/types/forum";
+import { ScreenWrapper } from "@/src/components/ScreenWrapper";
 
 export default function CreatePostScreen() {
     const router = useRouter();
@@ -61,6 +62,7 @@ export default function CreatePostScreen() {
     };
 
     return (
+        <ScreenWrapper showBack>
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
             <Text style={styles.headerTitle}>Start a Discussion</Text>
 
@@ -118,6 +120,7 @@ export default function CreatePostScreen() {
                 )}
             </TouchableOpacity>
         </ScrollView>
+        </ScreenWrapper>
     );
 }
 

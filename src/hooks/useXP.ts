@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import {
-    getAlgorithmsWithUnlockStatus,
-    getNextLockedAlgorithm,
-    getUserProfile,
+  getAlgorithmsWithUnlockStatus,
+  getNextLockedAlgorithm,
+  getRecommendedChallenge,
+  getUserProfile,
 } from '../lib/queries/xp'
 import { calculateXPProgress } from '../lib/xp'
 
@@ -39,11 +40,19 @@ interface XPProgress {
   xpToNext: number
 }
 
+interface RecommendedChallenge {
+  title: string
+  leetcode_slug: string
+  difficulty: string
+  tags: string[]
+}
+
 export const useXP = () => {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [algorithms, setAlgorithms] = useState<AlgorithmWithStatus[]>([])
   const [nextLocked, setNextLocked] = useState<NextLocked | null>(null)
   const [xpProgress, setXPProgress] = useState<XPProgress | null>(null)
+  const [recommendedChallenge, setRecommendedChallenge] = useState<RecommendedChallenge | null>(null) 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -61,6 +70,10 @@ export const useXP = () => {
       setAlgorithms(algorithmsData)
       setNextLocked(nextLockedData)
       setXPProgress(calculateXPProgress(profileData.total_xp))
+
+      // fetch recommended challenge based on real XP
+      const challengeData = await getRecommendedChallenge(profileData.total_xp ?? 0)
+      setRecommendedChallenge(challengeData) 
 
     } catch (err) {
       console.error('useXP error:', err)
@@ -82,6 +95,7 @@ export const useXP = () => {
     algorithms,
     nextLocked,
     xpProgress,
+    recommendedChallenge,
     loading,
     error,
     refresh,

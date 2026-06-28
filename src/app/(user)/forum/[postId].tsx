@@ -1,17 +1,26 @@
-import React, { useState, useCallback } from "react";
-import { 
-  View, Text, FlatList, TextInput, TouchableOpacity, 
-  ActivityIndicator, Alert, StyleSheet, KeyboardAvoidingView, Platform 
-} from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useForumPostDetails } from "@/src/hooks/useForum";
-import { 
-  saveReplyToDB, deletePostFromDB, updatePostInDB, 
-  deleteReplyFromDB, updateReplyInDB 
-} from "@/src/lib/queries/forum";
+import { ScreenWrapper } from "@/src/components/ScreenWrapper";
 import Colors from "@/src/constants/Colors";
+import { useForumPostDetails } from "@/src/hooks/useForum";
+import {
+    deletePostFromDB,
+    deleteReplyFromDB,
+    saveReplyToDB,
+    updatePostInDB,
+    updateReplyInDB
+} from "@/src/lib/queries/forum";
 import { ForumReply } from "@/src/types/forum";
+import { FontAwesome } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
+import {
+    ActivityIndicator, Alert,
+    FlatList,
+    KeyboardAvoidingView, Platform,
+    StyleSheet,
+    Text,
+    TextInput, TouchableOpacity,
+    View
+} from "react-native";
 
 const formatDate = (dateString?: string) => {
     if (!dateString) return "";
@@ -107,10 +116,11 @@ export default function PostDetailScreen() {
     }
 
     return (
-        <KeyboardAvoidingView 
-            style={styles.container} 
-            behavior={Platform.OS === "ios" ? "padding" : "height"} 
-            keyboardVerticalOffset={Platform.OS === "ios" ? 170 : 110}
+        <ScreenWrapper showBack pillLabel="Post" pillIcon="comments">
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
         >
             <View style={styles.innerLayout}>
                 <FlatList 
@@ -134,28 +144,35 @@ export default function PostDetailScreen() {
                     )} 
                     contentContainerStyle={styles.listContent} 
                 />
-                <View style={styles.safeAreaDock}>
-                    <View style={styles.inputDockInner}>
-                        <TextInput 
-                            style={styles.input} 
-                            placeholder="Leave ur comment!" 
-                            placeholderTextColor="#a29286" 
-                            value={replyText} 
-                            onChangeText={setReplyText} 
-                            multiline 
-                            blurOnSubmit={false}
-                        />
-                        <TouchableOpacity 
-                            style={[styles.sendButton, !replyText.trim() && styles.disabledButton]} 
-                            onPress={handleSendReply} 
-                            disabled={submitting || !replyText.trim()}
-                        >
-                            {submitting ? <ActivityIndicator color="#FFF" size="small" /> : <Text style={styles.sendButtonText}>Send</Text>}
-                        </TouchableOpacity>
+                {/* Input dock — hide when editing post or reply */}
+                {!isEditingPost && !editingReplyId && (
+                    <View style={styles.safeAreaDock}>
+                        <View style={styles.inputDockInner}>
+                            <TextInput 
+                                style={styles.input} 
+                                placeholder="Add to the discussion..." 
+                                placeholderTextColor="#a29286" 
+                                value={replyText} 
+                                onChangeText={setReplyText} 
+                                multiline 
+                                blurOnSubmit={false}
+                            />
+                            <TouchableOpacity 
+                                style={[styles.sendButton, !replyText.trim() && styles.disabledButton]} 
+                                onPress={handleSendReply} 
+                                disabled={submitting || !replyText.trim()}
+                            >
+                                {submitting 
+                                    ? <ActivityIndicator color="#FFF" size="small" /> 
+                                    : <FontAwesome name="send" size={16} color="#fff" />
+                                }
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
+                )}
             </View>
         </KeyboardAvoidingView>
+        </ScreenWrapper>
     );
 }
 
@@ -246,6 +263,8 @@ const styles = StyleSheet.create({
     innerLayout: { flex: 1 },
     centered: { flex: 1, justifyContent: "center", alignItems: "center", padding: 20 },
     listContent: { padding: 16, paddingBottom: 20 },
+
+    // Main post card
     mainPostCard: { backgroundColor: "#FFFFFF", borderRadius: 16, padding: 18, marginBottom: 20, borderWidth: 1, borderColor: Colors.potato.darker },
     mainTitle: { fontSize: 22, fontWeight: "700", color: Colors.potato.darker, marginBottom: 10 },
     mainBody: { fontSize: 15, color: Colors.potato.text, lineHeight: 22, marginBottom: 16 },
@@ -253,23 +272,31 @@ const styles = StyleSheet.create({
     mainAuthor: { fontSize: 13, fontWeight: "700", color: Colors.potato.darker },
     mainMeta: { fontSize: 12, color: "#8a7565" },
     repliesSectionDivider: { fontSize: 14, fontWeight: "700", color: Colors.potato.tint, marginTop: 12, textTransform: "uppercase", letterSpacing: 0.5 },
-    replyCard: { backgroundColor: "#FFFFFF", borderRadius: 12, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: Colors.potato.darker },
+
+    // Reply card
+    replyCard: { backgroundColor: Colors.potato.background, borderRadius: 12, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: Colors.potato.warm, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 3, elevation: 2 },
     replyHeader: { flexDirection: "row", justifyContent: "space-between", marginBottom: 8 },
     replyAuthor: { fontSize: 13, fontWeight: "700", color: Colors.potato.darker },
     replyMeta: { fontSize: 11, color: "#8a7565" },
     replyBody: { fontSize: 14, color: Colors.potato.text, lineHeight: 19 },
+
+    // Owner controls
     ownerControls: { flexDirection: "row", gap: 14, alignSelf: "flex-end", marginTop: 4 },
     editLink: { fontSize: 13, color: Colors.potato.tint, fontWeight: "600" },
     deleteLink: { fontSize: 13, color: "#b3261e", fontWeight: "600" },
+
+    // Edit inputs
     editInput: { borderWidth: 1, borderColor: Colors.potato.border, borderRadius: 8, padding: 10, marginBottom: 10, color: Colors.potato.darker, backgroundColor: Colors.potato.background },
     actionButtonGroup: { flexDirection: "row", gap: 10, justifyContent: "flex-end" },
     saveBtn: { backgroundColor: Colors.potato.tint, paddingVertical: 6, paddingHorizontal: 12, borderRadius: 6 },
     cancelBtn: { backgroundColor: "#8a7565", paddingVertical: 6, paddingHorizontal: 12, borderRadius: 6 },
     btnText: { color: "#FFF", fontSize: 12, fontWeight: "600" },
-    safeAreaDock: { backgroundColor: "#FFFFFF", borderTopWidth: 1, borderColor: Colors.potato.darker },
-    inputDockInner: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingVertical: 12 },
-    input: { flex: 1, backgroundColor: Colors.potato.background, borderRadius: 22, paddingHorizontal: 16, paddingVertical: 10, fontSize: 14, maxHeight: 100, color: Colors.potato.darker },
-    sendButton: { marginLeft: 12, backgroundColor: Colors.potato.tint, borderRadius: 22, paddingVertical: 10, paddingHorizontal: 18, justifyContent: "center", alignItems: "center" },
+
+    // Input dock
+    safeAreaDock: { backgroundColor: Colors.potato.background, borderTopWidth: 1, borderColor: Colors.potato.border, paddingBottom: 30 },
+    inputDockInner: { flexDirection: "row", alignItems: "center", paddingHorizontal: 15, paddingVertical: 10, gap: 10 },
+    input: { flex: 1, backgroundColor: '#ffffff', borderRadius: 22, paddingHorizontal: 16, paddingVertical: 10, fontSize: 14, maxHeight: 100, color: Colors.potato.darker, borderWidth: 1, borderColor: Colors.potato.border },
+    sendButton: { backgroundColor: Colors.potato.tint, borderRadius: 22, width: 44, height: 44, justifyContent: "center", alignItems: "center" },
     disabledButton: { backgroundColor: "#cbbcb1" },
-    sendButtonText: { color: "#FFFFFF", fontSize: 14, fontWeight: "700" }
+    sendButtonText: { color: "#FFFFFF", fontSize: 14, fontWeight: "700" },
 });

@@ -1,17 +1,19 @@
-import { useForumPosts } from "@/src/hooks/useForum";
-
-import { useFocusEffect, useRouter } from "expo-router";
+import { ScreenWrapper } from "@/src/components/ScreenWrapper";
 import Colors from "@/src/constants/Colors";
+import { useForumPosts } from "@/src/hooks/useForum";
+import { ForumPost } from "@/src/types/forum";
+import { FontAwesome } from "@expo/vector-icons";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback } from "react";
 import {
     ActivityIndicator,
     FlatList,
+    Image,
     StyleSheet,
     Text,
     TouchableOpacity,
-    View
+    View,
 } from "react-native";
-import { useCallback } from "react";
-import { ForumPost } from "@/src/types/forum";
 
 export default function ForumScreen() {
     const router = useRouter();
@@ -66,9 +68,10 @@ export default function ForumScreen() {
                         onPress={() => router.push(`/forum/${item.id}`)}
                         activeOpacity={0.6}
                     >
-                        <Text style={styles.commentActionText}>
-                            💬 View Replies
-                        </Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                            <FontAwesome name="comment" size={13} color={Colors.potato.tint} />
+                            <Text style={styles.commentActionText}>View Replies</Text>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </TouchableOpacity>
@@ -84,7 +87,15 @@ export default function ForumScreen() {
     }
 
     return (
+        <ScreenWrapper showBack pillLabel="Forum" pillIcon="comments">
         <View style={styles.container}>
+            
+            {/* potato watermark */}
+            <Image
+                source={require('@/assets/images/potato.png')}
+                style={styles.potatoWatermark}
+            />
+
             <FlatList
                 data={posts}
                 keyExtractor={(item) => item.id}
@@ -105,6 +116,7 @@ export default function ForumScreen() {
                 <Text style={styles.fabText}>+</Text>
             </TouchableOpacity>
         </View>
+        </ScreenWrapper>
     );
 }
 
@@ -224,4 +236,13 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 15,
     },
+    potatoWatermark: {
+        position: 'absolute',
+        right: 120,
+        top: 350,
+        width: 350,
+        height: 350,
+        opacity: 0.06,
+        transform: [{ rotate: '5deg' }],
+  },
 });

@@ -1,7 +1,8 @@
+import { ScreenWrapper } from '@/src/components/ScreenWrapper'
 import Colors from '@/src/constants/Colors'
 import { useAlgorithms } from '@/src/hooks/useAlgorithms'
 import { useRouter } from 'expo-router'
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 
 export default function LearnScreen() {
   const { algorithms, loading } = useAlgorithms()
@@ -16,10 +17,21 @@ export default function LearnScreen() {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
+    <ScreenWrapper showBack pillLabel="Learning" pillIcon="book">
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+        style={{ backgroundColor: Colors.potato.background }}
+      >
+
+      {/* decorative potato */}
+      <View style={styles.potatoContainer}>
+        <Image
+          source={require('@/assets/images/potato.png')}
+          style={styles.potatoImage}
+        />
+      </View>
+      
       <Text style={styles.title}>Choose an Algorithm</Text>
 
       {algorithms.map((algorithm) => (
@@ -45,7 +57,8 @@ export default function LearnScreen() {
         </Pressable>
       ))}
 
-    </ScrollView>
+      </ScrollView>
+    </ScreenWrapper>
   )
 }
 
@@ -57,7 +70,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 15,
-    backgroundColor: 'white',
+    backgroundColor: Colors.potato.background,
   },
   title: {
     fontSize: 22,
@@ -115,5 +128,14 @@ const styles = StyleSheet.create({
   category: {
     fontSize: 11,
     color: Colors.potato.text,
+  },
+    potatoContainer: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  potatoImage: {
+    width: 80,
+    height: 80,
+    opacity: 0.4,
   },
 })
