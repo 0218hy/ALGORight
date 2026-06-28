@@ -1,4 +1,5 @@
 import { LearningHeader } from '@/src/components/LearningHeader'
+import { ScreenWrapper } from '@/src/components/ScreenWrapper'
 import Colors from '@/src/constants/Colors'
 import { FlashcardCard } from '@/src/features/learning/components/FlashCard'
 import { useAlgorithm } from '@/src/hooks/useAlgorithm'
@@ -31,13 +32,12 @@ export default function FlashcardsScreen() {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
+    <ScreenWrapper showBack pillLabel="Flashcards" pillIcon="clone">
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
        <LearningHeader
-          label="Flashcards"
-          icon="clone"
           category={algorithm?.category ?? 'Algorithm'}
           title={algorithm?.title ?? 'Algorithm'}
         />
@@ -82,7 +82,8 @@ export default function FlashcardsScreen() {
         </Pressable>
       </View>
 
-    </ScrollView>
+      </ScrollView>
+    </ScreenWrapper>
   )
 }
 

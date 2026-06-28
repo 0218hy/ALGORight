@@ -1,4 +1,5 @@
 import { CircleProgress } from '@/src/components/CircleProgress'
+import { ScreenWrapper } from '@/src/components/ScreenWrapper'
 import Colors from '@/src/constants/Colors'
 import { useAuthContext } from '@/src/context/AuthContext'
 import { useXP } from '@/src/hooks/useXP'
@@ -8,7 +9,7 @@ import { Ionicons } from '@expo/vector-icons'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { useFocusEffect } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SvgXml } from 'react-native-svg'
 
 export default function ProfileScreen() {
@@ -51,6 +52,7 @@ export default function ProfileScreen() {
   }
   
   return (
+    <ScreenWrapper showLogout>
     <ScrollView
       style={styles.screen}
       contentContainerStyle={styles.container}
@@ -82,6 +84,10 @@ export default function ProfileScreen() {
 
       {/* Level + Unlock side by side */}
       <View style={styles.rowCard}>
+        <Image
+          source={require('@/assets/images/potato.png')}
+          style={[styles.rowCardWatermark, { transform: [{ scaleX: -1 }] }]}
+        />
         
         {/* Left — Level Circle */}
         <View style={styles.leftHalf}>
@@ -229,6 +235,7 @@ export default function ProfileScreen() {
         )}
       </View>
     </ScrollView>
+    </ScreenWrapper>
   )
 }
 
@@ -313,9 +320,19 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 4,
     alignItems: 'center',
     gap: 12,
+    overflow: 'hidden',
+  },
+  rowCardWatermark: {
+    position: 'absolute',
+    right: 10,
+    bottom: 70,
+    width: 120,
+    height: 120,
+    opacity: 0.10,
+    transform: [{ rotate: '5deg' }],
   },
   leftHalf: {
     alignItems: 'center',
@@ -328,14 +345,18 @@ const styles = StyleSheet.create({
 
   // Card
   card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 24,
+    backgroundColor: Colors.potato.background,
+    borderRadius: 20,
+    paddingVertical: 18,
+    paddingHorizontal: 24,
+    borderWidth: 1,
+    borderColor: Colors.potato.border,
     marginBottom: 15,
+
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
+    shadowOpacity: 0.15,
+    shadowRadius: 1.5,
     elevation: 2,
   },
   sectionTitleRow: {

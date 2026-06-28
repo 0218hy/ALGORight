@@ -1,4 +1,5 @@
 import Button from '@/src/components/Button';
+import { ScreenWrapper } from '@/src/components/ScreenWrapper';
 import { Text } from '@/src/components/Themed';
 import Colors from '@/src/constants/Colors';
 import { algorithmRegistry } from '@/src/features/visualizer/algorithmRegistry';
@@ -51,6 +52,7 @@ export default function Visualizer() {
     }
 
     return (
+        <ScreenWrapper showBack pillLabel="Visualizer" pillIcon="play-circle">
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 80}
@@ -60,7 +62,9 @@ export default function Visualizer() {
                 contentContainerStyle={styles.screenView}
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
-                ref={scrollViewRef}>
+                ref={scrollViewRef}
+                style={{ backgroundColor: Colors.potato.background }} 
+            >
 
                 {/* Visualization */}
                 <View style={styles.card}>
@@ -117,14 +121,16 @@ export default function Visualizer() {
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
+        </ScreenWrapper>
     );
 }
 
 const styles = StyleSheet.create({
     screenView: {
-        padding: 10,
+        paddingHorizontal: 10,
+        paddingTop: 0, 
         justifyContent: 'flex-start',
-        backgroundColor: 'white',
+        backgroundColor: Colors.potato.background,
     },
     card: {
         width: '100%',
@@ -169,8 +175,6 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: Colors.potato.background,
     },
-
-
 });

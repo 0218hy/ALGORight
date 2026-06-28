@@ -1,7 +1,9 @@
+import { ScreenWrapper } from '@/src/components/ScreenWrapper';
+import Colors from '@/src/constants/Colors';
 import { useLeetcodeQuiz } from '@/src/hooks/useLeetcode';
 import { saveLeetcodeQuizAttempt } from '@/src/lib/queries/leetcode';
 import { LeetcodeMultipleChoiceOption } from '@/src/types/leetcode';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
     ActivityIndicator,
@@ -108,16 +110,9 @@ export default function LeetcodeQuizScreen() {
     }
 
     return (
+        <ScreenWrapper showBack pillLabel="Test Your Approach" pillIcon="code">
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-            {/* Back Navigation */}
-            <TouchableOpacity
-                style={styles.backNavigationButton}
-                onPress={() => router.push(`/leetcode/${slug}`)}
-                activeOpacity={0.7}
-            >
-                <Text style={styles.backNavigationText}>← Back</Text>
-            </TouchableOpacity>
-            <Text style={styles.screenHeader}> Quiz! </Text>
+            <Text style={styles.screenHeader}> Quiz </Text>
             <Text style={styles.screenSubtitle}> {slug} </Text>
 
             {questions.map((quiz, qIdx) => {
@@ -211,14 +206,15 @@ export default function LeetcodeQuizScreen() {
             <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
                 <Text style={styles.resetText}>Reset & Try Again</Text>
             </TouchableOpacity>
-        </ScrollView >
+        </ScrollView>
+        </ScreenWrapper>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FAF6F0', // Matches your custom potato theme palette background
+        backgroundColor: Colors.potato.background, 
     },
     contentContainer: {
         padding: 16,
@@ -394,7 +390,7 @@ const styles = StyleSheet.create({
     backNavigationText: {
         fontSize: 14,
         fontWeight: '700',
-        color: '#8b5a2b', // Using your exact tintColorPotato string
+        color: Colors.potato.tint,
         letterSpacing: 0.3,
     },
     loadingContainer: {

@@ -1,11 +1,13 @@
+import { LearningHeader } from '@/src/components/LearningHeader'
+import { ScreenWrapper } from '@/src/components/ScreenWrapper'
 import Colors from '@/src/constants/Colors'
-import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { router, Stack, useLocalSearchParams } from 'expo-router'
-import { useState } from 'react'
-import { ActivityIndicator, Alert, Pressable, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useAlgoQuiz } from '@/src/hooks/useAlgoQuiz'
+import { useAlgorithm } from '@/src/hooks/useAlgorithm'
 import { saveAlgoQuizAttempt } from '@/src/lib/queries/algoQuiz'
 import { AlgoMultipleChoiceOption } from '@/src/types/algoQuiz'
+import { useLocalSearchParams } from 'expo-router'
+import { useState } from 'react'
+import { ActivityIndicator, Alert, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 export default function QuizScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -14,6 +16,7 @@ export default function QuizScreen() {
 
     const [selectedOptions, setSelectedOptions] = useState<{ [key: number]: 'A' | 'B' | 'C' | 'D' | null }>({});
     const [submittedQuestions, setSubmittedQuestions] = useState<{ [key: number]: boolean }>({});
+    const { algorithm, loading: algorithmLoading } = useAlgorithm(id)
 
     const handleSelectOption = (questionIndex: number, optionId: 'A' | 'B' | 'C' | 'D') => {
         if (submittedQuestions[questionIndex]) return;
@@ -95,25 +98,16 @@ export default function QuizScreen() {
     }
 
     return (
-        <>
-            <Stack.Screen
-                options={{
-                    title: 'Quiz',
-                    headerBackTitle: 'Back',
-                    headerLeft: () => (
-                        <Pressable onPress={() => router.back()} style={{ marginLeft: 10 }}>
-                            <FontAwesome name="chevron-left" size={18} color={Colors.potato.darker} />
-                        </Pressable>
-                    )
-                }}
-            />
+        <ScreenWrapper showBack pillLabel="Quiz" pillIcon="question-circle">
             <ScrollView
                 style={styles.container}
                 contentContainerStyle={styles.contentContainer}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={styles.screenHeader}>Quiz Point</Text>
-                <Text style={styles.screenSubtitle}>{algoTitle}</Text>
+                <LearningHeader
+                    category={algorithm?.category ?? 'Algorithm'}
+                    title={algorithm?.title ?? 'Algorithm'}
+                />
 
                 {questions.map((quiz, qIdx) => {
                     const selectedOption = selectedOptions[qIdx] || null;
@@ -197,13 +191,13 @@ export default function QuizScreen() {
                     <Text style={styles.resetText}>Reset & Try Again</Text>
                 </TouchableOpacity>
             </ScrollView>
-        </>
+        </ScreenWrapper>
     )
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FAF6F0',
+        backgroundColor: Colors.potato.background,
     },
     contentContainer: {
         padding: 16,
@@ -211,17 +205,6 @@ const styles = StyleSheet.create({
         maxWidth: 600,
         width: '100%',
         alignSelf: 'center',
-    },
-    screenHeader: {
-        fontSize: 24,
-        fontWeight: '800',
-        color: '#4A2306',
-    },
-    screenSubtitle: {
-        fontSize: 14,
-        color: '#7E6C5C',
-        marginBottom: 20,
-        marginTop: 4,
     },
     quizCard: {
         backgroundColor: '#ffffff',

@@ -1,66 +1,17 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import React from 'react';
-import { Pressable } from 'react-native';
+import { Stack } from 'expo-router'
 
-import { useClientOnlyValue } from '@/src/components/useClientOnlyValue';
-import { useColorScheme } from '@/src/components/useColorScheme';
-import Colors from '@/src/constants/Colors';
-
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function UserLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: useClientOnlyValue(false, true),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-        }}
-      />
-      <Tabs.Screen name="visualizer" options={{ href: null }} />
-      <Tabs.Screen name="learn" options={{ href: null }} />
-      <Tabs.Screen name="summary/[id]" options={{ href: null }} />
-      <Tabs.Screen name="algorithm/[id]" options={{ href: null }} />
-      <Tabs.Screen name="flashcards/[id]" options={{ href: null }} />
-      <Tabs.Screen name="leetcode/index" options={{ href: null }} />
-      <Tabs.Screen name="leetcode/[slug]" options={{ href: null }} />
-      <Tabs.Screen name="leetcode/leetcodeQuiz/[slug]" options={{ href: null }} />
-      <Tabs.Screen name="algoQuiz/[id]" options={{ href: null }} />
-    </Tabs>
-  );
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="learn" />
+      <Stack.Screen name="visualizer" />
+      <Stack.Screen name="algorithm/[id]" />
+      <Stack.Screen name="summary/[id]" />
+      <Stack.Screen name="flashcards/[id]" />
+      <Stack.Screen name="algoQuiz/[id]" />
+      <Stack.Screen name="leetcode" />
+      <Stack.Screen name="forum" />
+    </Stack>
+  )
 }

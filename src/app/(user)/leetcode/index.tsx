@@ -1,10 +1,10 @@
 
+import { ScreenWrapper } from '@/src/components/ScreenWrapper';
 import Colors from '@/src/constants/Colors';
 import { fetchLeetcodeFromApi, getLeetcodeQuestionsFromDB } from '@/src/lib/queries/leetcode';
-import { Difficulty, LeetcodeTopicTag, LeetcodeFilterFormData, LeetcodeQuestion } from '@/src/types/leetcode';
-import { Href, useRouter } from 'expo-router';
-import { useFocusEffect } from 'expo-router';
-import React, { useState, useCallback } from 'react';
+import { LeetcodeFilterFormData, LeetcodeQuestion } from '@/src/types/leetcode';
+import { Href, useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useState } from 'react';
 import {
   Alert,
   ScrollView,
@@ -98,7 +98,8 @@ export default function LeetcodeScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScreenWrapper showBack pillLabel="Challenge" pillIcon="trophy">
+      <ScrollView contentContainerStyle={styles.container}>
       {/* Difficulty */}
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Difficulty</Text>
@@ -170,7 +171,8 @@ export default function LeetcodeScreen() {
         )}
       </View>
 
-    </ScrollView>
+      </ScrollView>
+    </ScreenWrapper>
   );
 }
 
@@ -192,19 +194,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
   },
-  pickerWrapper: {
-    backgroundColor: Colors.potato.background,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#555555',
-    height: 50,
-    justifyContent: 'center',
-  },
-  picker: {
-    color: Colors.potato.text,
-    height: 50,
-    width: '100%',
-  },
   actionGroup: {
     flexDirection: 'row',
     gap: 12,
@@ -212,11 +201,18 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     flex: 2,
-    backgroundColor: Colors.potato.darker,
-    paddingVertical: 14,
-    borderRadius: 4,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 8,
+    backgroundColor: Colors.potato.darker,
+    paddingVertical: 14,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 1.5,
+    elevation: 2,
   },
   submitButtonText: {
     color: '#ffffff',
@@ -225,13 +221,15 @@ const styles = StyleSheet.create({
   },
   resetButton: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
     backgroundColor: '#3c3c3c',
     paddingVertical: 14,
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#555555',
+    borderColor: Colors.potato.border,
   },
   resetButtonText: {
     color: '#eff0f6',

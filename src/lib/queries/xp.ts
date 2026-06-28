@@ -290,3 +290,17 @@ export const getBestQuizScore = async (algorithmId: string) => {
 
   return data ?? null
 }
+
+export const getRecommendedChallenge = async (totalXP: number) => {
+  const difficulty = totalXP < 100 ? 'Easy' : totalXP < 300 ? 'Medium' : 'Hard'
+
+  const { data, error } = await supabase
+    .from('challenge_leetcode')
+    .select('title, leetcode_slug, difficulty, tags')
+    .eq('difficulty', difficulty)
+    .limit(1)
+    .maybeSingle()
+
+  if (error) throw error
+  return data ?? null
+}
