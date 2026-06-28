@@ -1,6 +1,6 @@
 import { AlgoQuizAttempt, AlgoQuizQuestion } from "@/src/types/algoQuiz";
 import { supabase } from "../supabase";
-
+import { awardQuizXP } from "./xp";
 
 export const getAlgoQuizById = async (algorithm_id: string): Promise<AlgoQuizQuestion[] | null> => {
   const { data, error } = await supabase
@@ -46,6 +46,7 @@ export const saveAlgoQuizAttempt = async (payload: AlgoQuizAttempt): Promise<voi
         user_id: user.id,
         algorithm_id: payload.algorithm_id,
         score: payload.score,
+        xp_earned: 0,  
       })
       .select('id')
       .single();
@@ -66,8 +67,23 @@ export const saveAlgoQuizAttempt = async (payload: AlgoQuizAttempt): Promise<voi
       .insert(detailRows);
 
     if (detailsError) throw detailsError;
+
+    
+    // award XP
+    const { xpEarned, xpDiff } = await awardQuizXP(
+      payload.algorithm_id,
+      payload.score,
+    )
+
+    // update xp_earned on this attempt
+    await supabase
+      .from('algorithm_attempts')
+      .update({ xp_earned: xpEarned })
+      .eq('id', attemptData.id)
+
+    console.log(`Quiz saved — XP earned: ${xpEarned}, awarded: ${xpDiff}`)
+
   } catch (err) {
     console.error("Failed to save quiz attempt history:", err);
   }
 }
-  

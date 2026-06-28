@@ -1,7 +1,8 @@
 import { Session, User } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
 import { fetchUserProfile } from '../lib/queries/auth'
+import { updateStreak } from '../lib/queries/xp'
+import { supabase } from '../lib/supabase'
 
 export interface UserProfile {
     username: string
@@ -39,6 +40,12 @@ export const useAuth = (): AuthState => {
             setUser(session?.user ?? null)
             if (session?.user) {
                 await loadProfileData(session.user.id)
+                // update streak for returning users (existing session)
+                try {
+                    await updateStreak()
+                } catch (err) {
+                    console.error('Streak update failed:', err)
+                }
             }
             setLoading(false)
         })
@@ -48,12 +55,19 @@ export const useAuth = (): AuthState => {
             async (_event, session) => {
                 setSession(session)
                 setUser(session?.user ?? null)
-                if(session?.user){
+                if (session?.user) {
                     await loadProfileData(session.user.id)
-                } 
+                    // only update streak on fresh sign in, not every auth state change
+                    if (_event === 'SIGNED_IN') {
+                        try {
+                            await updateStreak()
+                        } catch (err) {
+                            console.error('Streak update failed:', err)
+                        }
+                    }
+                }
                 setLoading(false)
-            }
-        )
+            })
         
         //cleanup listener when component unmounts 
         return () => subscription.unsubscribe()

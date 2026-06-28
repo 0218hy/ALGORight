@@ -50,8 +50,8 @@ export default function HomePage() {
 
         <Pressable
           style={({ pressed }) => [styles.navCard, pressed && styles.cardPressed]}
-          onPress={() => console.log("pressed")}>
-          <Text style={styles.navCardText}> Daily Quiz </Text>
+          onPress={() => router.push('/forum' as Href)}>
+          <Text style={styles.navCardText}> Forum </Text>
         </Pressable>
 
         <Pressable
