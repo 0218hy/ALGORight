@@ -6,13 +6,14 @@ import { avataaars } from '@dicebear/collection'
 import { createAvatar } from '@dicebear/core'
 import { Ionicons } from '@expo/vector-icons'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { useEffect, useState } from 'react'
+import { useFocusEffect } from 'expo-router'
+import { useCallback, useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SvgXml } from 'react-native-svg'
 
 export default function ProfileScreen() {
   const { profile: authProfile } = useAuthContext()
-  const { profile, algorithms, nextLocked, xpProgress, loading } = useXP()
+  const { profile, algorithms, nextLocked, xpProgress, loading, refresh } = useXP()
   const [avatarUri, setAvatarUri] = useState<string | null>(null)
 
   const totalXP = profile?.total_xp ?? 0
@@ -35,6 +36,11 @@ export default function ProfileScreen() {
     generateAvatar()
   }, [username])
 
+  useFocusEffect(
+  useCallback(() => {
+    refresh()
+  }, [])
+)
 
   if (loading) {
     return (
@@ -434,3 +440,4 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 })
+

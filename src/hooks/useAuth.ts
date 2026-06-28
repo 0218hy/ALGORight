@@ -40,10 +40,9 @@ export const useAuth = (): AuthState => {
             setUser(session?.user ?? null)
             if (session?.user) {
                 await loadProfileData(session.user.id)
-                // update streak on app open 
+                // update streak for returning users (existing session)
                 try {
-                    const { streak, bonusXP } = await updateStreak()
-                    console.log(`Streak: ${streak} days, bonus XP: ${bonusXP}`)
+                    await updateStreak()
                 } catch (err) {
                     console.error('Streak update failed:', err)
                 }
@@ -56,19 +55,19 @@ export const useAuth = (): AuthState => {
             async (_event, session) => {
                 setSession(session)
                 setUser(session?.user ?? null)
-                if(session?.user){
+                if (session?.user) {
                     await loadProfileData(session.user.id)
-                    // update streak on auth state change 
-                    try {
-                        const { streak, bonusXP } = await updateStreak()
-                        console.log(`Streak: ${streak} days, bonus XP: ${bonusXP}`)
-                    } catch (err) {
-                        console.error('Streak update failed:', err)
+                    // only update streak on fresh sign in, not every auth state change
+                    if (_event === 'SIGNED_IN') {
+                        try {
+                            await updateStreak()
+                        } catch (err) {
+                            console.error('Streak update failed:', err)
+                        }
                     }
-                } 
+                }
                 setLoading(false)
-            }
-        )
+            })
         
         //cleanup listener when component unmounts 
         return () => subscription.unsubscribe()
