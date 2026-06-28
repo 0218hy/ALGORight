@@ -1,10 +1,11 @@
+import {
+  Difficulty,
+  LeetcodeQuestion,
+  LeetcodeQuizAttempt,
+  LeetcodeQuizQuestion
+} from '@/src/types/leetcode';
 import { supabase } from '../supabase';
-import { 
-    Difficulty, 
-    LeetcodeQuestion, 
-    LeetcodeQuizQuestion, 
-    LeetcodeQuizAttempt 
-  } from '@/src/types/leetcode';
+import { awardChallengeXP } from './xp';
 
 export const getLeetcodeQuestionBySlug = async (leetcode_slug: string): Promise<LeetcodeQuestion | null> => {
     const { data, error } = await supabase
@@ -106,6 +107,8 @@ export const saveLeetcodeQuizAttempt = async (payload: LeetcodeQuizAttempt): Pro
         user_id: user.id,
         leetcode_slug: payload.leetcode_slug,
         score: payload.score,
+        difficulty: payload.difficulty,
+        xp_earned: 0, 
       })
       .select('id')
       .single();
@@ -126,6 +129,22 @@ export const saveLeetcodeQuizAttempt = async (payload: LeetcodeQuizAttempt): Pro
       .insert(detailRows);
 
     if (detailsError) throw detailsError;
+
+    // award XP
+    const { xpEarned, xpDiff } = await awardChallengeXP(
+      payload.leetcode_slug,
+      payload.score,
+      payload.difficulty
+    )
+
+    // update xp_earned on this attempt
+    await supabase
+      .from('challenge_attempts')
+      .update({ xp_earned: xpEarned })
+      .eq('id', attemptData.id)
+
+    console.log(`Challenge saved — XP earned: ${xpEarned}, awarded: ${xpDiff}`)
+
   } catch (err) {
     console.error("Failed to save quiz attempt history:", err);
   }
