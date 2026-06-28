@@ -23,7 +23,7 @@ export default function AlgorithmDetailScreen() {
       icon: '📝',
       title: 'Quiz',
       description: 'Test your understanding',
-      onPress: () => router.push(`/quiz/${id}`),
+      onPress: () => router.push(`/algoQuiz/${id}`),
   },
   ]
 
