@@ -38,7 +38,7 @@ export function useVisualizer({
 
         // turn off the timer
         return () => clearInterval(id);
-    }), [playing, speed, steps.length];
+    }, [playing, speed, steps.length]);
 
     // return controller 
     return {

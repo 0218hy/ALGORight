@@ -10,7 +10,7 @@ export default function UserLayout() {
       <Stack.Screen name="summary/[id]" />
       <Stack.Screen name="flashcards/[id]" />
       <Stack.Screen name="algoQuiz/[id]" />
-      <Stack.Screen name="leetcode" />
+      <Stack.Screen name="leetcode/index" />
       <Stack.Screen name="forum" />
     </Stack>
   )
