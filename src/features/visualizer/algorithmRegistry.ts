@@ -1,5 +1,8 @@
 import { bubbleSort } from "./algorithms/bubbleSort";
-import { testSort } from "./algorithms/testSort";
+import { insertionSort } from "./algorithms/insertionSort";
+import { linearSearch } from "./algorithms/linearSearch";
+import { quickSort } from "./algorithms/quickSort";
+import { selectionSort } from "./algorithms/selectionSort";
 import { Step } from "./step";
 
 export interface Algorithm {
@@ -9,5 +12,8 @@ export interface Algorithm {
 
 export const algorithmRegistry: Algorithm[] = [
     bubbleSort,
-    testSort,
+    insertionSort,
+    quickSort,
+    selectionSort,
+    linearSearch,
 ];
