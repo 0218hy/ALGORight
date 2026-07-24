@@ -1,6 +1,5 @@
 import { bubbleSort } from "./algorithms/bubbleSort";
 import { insertionSort } from "./algorithms/insertionSort";
-import { linearSearch } from "./algorithms/linearSearch";
 import { quickSort } from "./algorithms/quickSort";
 import { selectionSort } from "./algorithms/selectionSort";
 import { Step } from "./step";
@@ -15,5 +14,4 @@ export const algorithmRegistry: Algorithm[] = [
     insertionSort,
     quickSort,
     selectionSort,
-    linearSearch,
 ];
