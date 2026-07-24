@@ -18,15 +18,57 @@ export function SortingVisualizer({ step }: { step: Step }) {
     const maxVal = totalBars > 0 ? Math.max(...step.array) : 1;
 
     const getBarColor = (index: number) => {
-        const highlighted = step.indices?.includes(index);
+        const isHighlighted = step.indices?.includes(index);
+        const meta = step.metadata;
 
-        if (highlighted && step.type == "compare") {
-            return "orange";
+        // binary search
+        if (step.type === "found" && isHighlighted) return "green";
+        if (step.type === "not_found") return "#ffcccb";
+        if (meta?.midIndex === index) return "purple";
+
+        // quicksort 
+        if (meta?.pivotIndex !== undefined) {
+            // in final sorted
+            if (meta.sortedIndices?.includes(index)) {
+                return "#57b369";
+            }
+
+            // out of partition
+            if (
+                meta.lowIndex !== undefined &&
+                meta.highIndex !== undefined &&
+                (index < meta.lowIndex || index > meta.highIndex)
+            ) {
+                return "#777879";
+            }
+    
+            // pivot
+            if (index === meta.pivotIndex)
+                return "#9333ea";
+    
+            // Current active partition
+            return "skyblue";
+        }
+    
+        // bubble sort, insertion sort
+        if (isHighlighted) {
+            if (step.type === "compare") return "orange";
+            if (step.type === "swap") return "red";
         }
 
-        if (highlighted && step.type == "swap") {
-            return "red";
+        // selection sort
+        if (meta?.minIndex !== undefined) {
+            if (index === meta.minIndex) return "#9333ea";
+
+            if (isHighlighted) {
+                if (step.type === "compare") return "orange";
+                if (step.type === "swap") return "red";
+                if (step.type === "new_min") return "red";
+            }
+    
+            return "skyblue";
         }
+
 
         return "skyblue";
     };
