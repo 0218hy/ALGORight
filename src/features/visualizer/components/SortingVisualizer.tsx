@@ -7,7 +7,7 @@ import React from "react";
 export function SortingVisualizer({ step }: { step: Step }) {
     const { width: windowWidth } = useWindowDimensions();
 
-    if (!step.array) return null;
+    if (!step?.array) return null;
 
     const canvasHeight = 220;
     const maxCardWidth = Math.min(windowWidth - 60, 360);
