@@ -195,30 +195,63 @@ export default function ProfileScreen() {
       {/* Recommendations */}
       <View style={styles.card}>
         <View style={styles.sectionTitleRow}>
-          <FontAwesome
-            name="magic"
-            size={16}
-            color={Colors.potato.text}
-          />
-          <Text style={styles.sectionTitle}>
-            Recommended Next
-          </Text>
+          <FontAwesome name="magic" size={16} color={Colors.potato.text} />
+          <Text style={styles.sectionTitle}>Recommended Next</Text>
         </View>
+
         {algorithms
           .filter((algo) => algo.is_unlocked)
-          .map((algo) => (
-            <View key={algo.id} style={styles.recommendRow}>
-              <FontAwesome name="clone" size={16} color={Colors.potato.tint}/>
-              <View>
-                <Text style={styles.recommendTitle}>
-                  Review {algo.title} flashcards
-                </Text>
-                <Text style={styles.recommendSub}>
-                  Strengthen your understanding
-                </Text>
+          .map((algo) => {
+            const bestScore = algo.best_score ?? 0
+            const maxScore = 5
+
+            if (!algo.attempted) {
+              return (
+                <View key={algo.id} style={styles.recommendRow}>
+                  <FontAwesome name="play-circle" size={16} color={Colors.potato.tint} />
+                  <View>
+                    <Text style={styles.recommendTitle}>
+                      Try {algo.title} quiz
+                    </Text>
+                    <Text style={styles.recommendSub}>
+                      You haven't attempted this quiz yet
+                    </Text>
+                  </View>
+                </View>
+              )
+            }
+
+            if (bestScore < 4) {
+              return (
+                <View key={algo.id} style={styles.recommendRow}>
+                  <FontAwesome name="clone" size={16} color={Colors.potato.tint} />
+                  <View>
+                    <Text style={styles.recommendTitle}>
+                      Review {algo.title} flashcards
+                    </Text>
+                    <Text style={styles.recommendSub}>
+                      Your best score: {bestScore}/{maxScore} — keep practising!
+                    </Text>
+                  </View>
+                </View>
+              )
+            }
+
+            return (
+              <View key={algo.id} style={styles.recommendRow}>
+                <FontAwesome name="check-circle" size={16} color="#4CAF50" />
+                <View>
+                  <Text style={styles.recommendTitle}>
+                    {algo.title} mastered
+                  </Text>
+                  <Text style={styles.recommendSub}>
+                    Best score: {bestScore}/{maxScore} 
+                  </Text>
+                </View>
               </View>
-            </View>
-          ))}
+            )
+          })}
+
         {nextLocked && (
           <View style={styles.recommendRow}>
             <FontAwesome name="trophy" size={16} color={Colors.potato.tint} />
@@ -227,8 +260,7 @@ export default function ProfileScreen() {
                 Complete a challenge to earn XP
               </Text>
               <Text style={styles.recommendSub}>
-                {Math.max(nextLocked.xp_threshold - totalXP, 0)} XP to unlock{' '}
-                {nextLocked.title}
+                {Math.max(nextLocked.xp_threshold - totalXP, 0)} XP to unlock {nextLocked.title}
               </Text>
             </View>
           </View>

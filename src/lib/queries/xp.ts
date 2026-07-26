@@ -32,7 +32,7 @@ export const getAlgorithmsWithUnlockStatus = async () => {
 
   const { data: algorithms, error: algoError } = await supabase
     .from('algorithms')
-    .select('id, title, difficulty, unlock_order, xp_threshold')
+    .select('id, title, difficulty, unlock_order, xp_threshold, description, category')
     .order('unlock_order', { ascending: true })
 
   if (algoError) throw algoError
@@ -46,12 +46,30 @@ export const getAlgorithmsWithUnlockStatus = async () => {
 
   const unlockedIds = new Set(unlocks?.map(u => u.algorithm_id) ?? [])
 
-  // for each algo, add boolean is_unlocked, how much XP still needed, 0 if unlocked) 
+  // fetch best quiz scores per algorithm
+  const { data: attempts } = await supabase
+    .from('algorithm_attempts')
+    .select('algorithm_id, score')
+    .eq('user_id', user.id)
+    .order('score', { ascending: false })
+
+  // build best score map
+  const bestScoreMap = new Map<string, number>()
+  attempts?.forEach(attempt => {
+    if (!bestScoreMap.has(attempt.algorithm_id) ||
+        attempt.score > (bestScoreMap.get(attempt.algorithm_id) ?? 0)) {
+      bestScoreMap.set(attempt.algorithm_id, attempt.score)
+    }
+  })
+
+  // for each algo, add boolean is_unlocked, how much XP still needed(0 if unlocked), best_score and attempted for recommendation system
   return algorithms.map(algo => ({
     ...algo,
     is_unlocked: algo.xp_threshold === 0 || unlockedIds.has(algo.id),
     xp_needed: Math.max(algo.xp_threshold - (profile?.total_xp ?? 0), 0),
-  }))
+    best_score: bestScoreMap.get(algo.id) ?? null,
+    attempted: bestScoreMap.has(algo.id),
+}))
 }
 
 // Get next locked algorithm 
@@ -138,24 +156,26 @@ export const awardXP = async (
 // Check and unlock algorithms based on new XP 
 // called inside awardXP 
 const checkAndUnlockAlgorithms = async (userId: string, totalXP: number) => {
-  // get all algorithms that should be unlocked
+  console.log('checkAndUnlockAlgorithms called:', { userId, totalXP })
+  
   const { data: algorithms, error } = await supabase
     .from('algorithms')
     .select('id, xp_threshold')
     .gt('xp_threshold', 0)
     .lte('xp_threshold', totalXP)
 
-  if (error) throw error
+  console.log('eligible algorithms:', algorithms)
+  console.log('query error:', error)
 
-  // get already unlocked algorithms
   const { data: existing } = await supabase
     .from('algorithm_unlocks')
     .select('algorithm_id')
     .eq('user_id', userId)
 
+  console.log('existing unlocks:', existing)
+
   const existingIds = new Set(existing?.map(u => u.algorithm_id) ?? [])
 
-  // insert new unlocks
   const newUnlocks = algorithms
     ?.filter(algo => !existingIds.has(algo.id))
     .map(algo => ({
@@ -163,8 +183,13 @@ const checkAndUnlockAlgorithms = async (userId: string, totalXP: number) => {
       algorithm_id: algo.id,
     })) ?? []
 
+  console.log('new unlocks to insert:', newUnlocks)
+
   if (newUnlocks.length > 0) {
-    await supabase.from('algorithm_unlocks').insert(newUnlocks)
+    const { error: insertError } = await supabase
+      .from('algorithm_unlocks')
+      .insert(newUnlocks)
+    console.log('insert error:', insertError)
   }
 
   return newUnlocks

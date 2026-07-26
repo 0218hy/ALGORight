@@ -23,6 +23,10 @@ interface AlgorithmWithStatus {
   xp_threshold: number
   is_unlocked: boolean
   xp_needed: number
+  best_score: number | null  
+  attempted: boolean          
+  description: string | null  
+  category: string 
 }
 
 interface NextLocked {
